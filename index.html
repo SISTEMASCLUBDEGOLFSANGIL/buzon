@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buzón de Quejas y Sugerencias - Club de Golf San Gil</title>
+    <style>
+        :root {
+            --royal-blue: #0a1931;
+            --accent-green: #008040;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: var(--royal-blue);
+            background-image: radial-gradient(circle at 50% 30%, #152b52 0%, #0a1931 70%);
+            position: relative;
+        }
+
+        .wave-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0; pointer-events: none; opacity: 0.25;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 580px;
+            z-index: 1;
+            border-top: 6px solid #003399;
+            position: relative;
+        }
+
+        .header { text-align: center; margin-bottom: 20px; }
+        .header img { max-width: 120px; height: auto; margin-bottom: 12px; }
+        .header h1 { color: #003399; font-size: 22px; margin: 0 0 6px 0; font-weight: 700; }
+        .header p { color: #555555; font-size: 13px; margin: 0; font-style: italic; }
+
+        .top-actions { display: flex; justify-content: flex-end; margin-bottom: 15px; }
+
+        .btn-consultar {
+            background-color: #1e3a8a;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.3s;
+        }
+        .btn-consultar:hover { background-color: #1e40af; }
+
+        .form-group { margin-bottom: 18px; }
+        .form-row { display: flex; gap: 15px; }
+        .form-row .form-group { flex: 1; }
+
+        label { display: block; margin-bottom: 6px; font-weight: 600; color: #003399; font-size: 14px; }
+
+        input[type="text"], input[type="date"], select, textarea {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+            background-color: #f8fafc;
+            color: #333333;
+        }
+
+        input[type="text"]:focus, input[type="date"]:focus, select:focus, textarea:focus {
+            border-color: #003399; outline: none; background-color: #ffffff;
+        }
+
+        textarea { resize: vertical; height: 100px; }
+
+        .btn-submit {
+            background-color: var(--accent-green);
+            color: #ffffff;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+        .btn-submit:hover { background-color: #006633; }
+        .btn-submit:disabled { opacity: .6; cursor: not-allowed; }
+
+        .alert {
+            margin-top: 20px; padding: 20px; border-radius: 12px; text-align: left;
+            display: none; font-size: 14px; line-height: 1.6;
+        }
+        .alert-success { background-color: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+        .alert-error { background-color: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+
+        .alert-title {
+            font-size: 16px; font-weight: bold; margin-bottom: 8px;
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        .folio-box {
+            background: #ffffff; border: 2px dashed #16a34a; padding: 10px; border-radius: 8px;
+            text-align: center; font-size: 18px; font-weight: bold; color: #003399;
+            margin: 12px 0; letter-spacing: 1px;
+        }
+
+        .track-link {
+            display: block; text-align: center; background: #1e3a8a; color: #fff; text-decoration: none;
+            padding: 10px; border-radius: 8px; font-weight: bold; font-size: 14px; margin-bottom: 10px;
+        }
+        .track-link:hover { background: #1e40af; }
+
+        .contact-info {
+            font-size: 13px; color: #475569; border-top: 1px solid #cbd5e1; padding-top: 10px; margin-top: 10px;
+        }
+
+        .admin-link-container {
+            text-align: center; margin-top: 25px; border-top: 1px solid #e2e8f0; padding-top: 15px;
+        }
+        .admin-link { color: #64748b; font-size: 13px; text-decoration: none; font-weight: 500; }
+        .admin-link:hover { color: #003399; }
+    </style>
+</head>
+<body>
+
+    <svg class="wave-bg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" preserveAspectRatio="none">
+        <path fill="none" stroke="#60a5fa" stroke-width="2" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,165.3C1248,150,1344,107,1392,85.3L1440,64"></path>
+        <path fill="none" stroke="#93c5fd" stroke-width="1.5" d="M0,160L48,176C96,192,192,224,288,208C384,192,480,128,576,112C672,96,768,128,864,144C960,160,1056,160,1152,144C1248,128,1344,96,1392,80L1440,64"></path>
+    </svg>
+
+<div class="container">
+    <div class="top-actions">
+        <!-- Ahora redirige a buscar.html -->
+        <a href="buscar.html" class="btn-consultar">🔍 Consultar Folio</a>
+    </div>
+
+    <div class="header">
+        <img src="San_Gil_sn_Fondo.png" alt="Club de Golf San Gil Logo">
+        <h1>Buzón de Quejas y Sugerencias</h1>
+        <p>Su experiencia es nuestra prioridad. Por favor, compártanos sus comentarios para seguir mejorando.</p>
+    </div>
+
+    <form id="feedbackForm">
+        <div class="form-row">
+            <div class="form-group" style="flex: 2;">
+                <label for="nombre">Nombre del Socio / Visitante: *</label>
+                <input type="text" id="nombre" name="nombre" required placeholder="Ej. Juan Pérez">
+            </div>
+            <div class="form-group" style="flex: 1;">
+                <label for="numSocio">Nro. de Socio: *</label>
+                <input type="text" id="numSocio" name="numSocio" required placeholder="Ej. 1234">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group" style="flex: 2;">
+                <label for="domicilio">Domicilio / Ubicación en el Club:</label>
+                <input type="text" id="domicilio" name="domicilio" placeholder="Ej. Villa 15 / Hoyo 4">
+            </div>
+            <div class="form-group" style="flex: 1;">
+                <label for="fechaReporte">Fecha del Reporte: *</label>
+                <input type="date" id="fechaReporte" name="fechaReporte" required>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="tipo">Tipo de Registro:</label>
+                <select id="tipo" name="tipo">
+                    <option value="Queja">Queja</option>
+                    <option value="Sugerencia">Sugerencia</option>
+                    <option value="Reporte de Campo">Reporte de Mantenimiento / Campo</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="prioridad">Nivel de Prioridad:</label>
+                <select id="prioridad" name="prioridad">
+                    <option value="Baja">Baja</option>
+                    <option value="Media">Media</option>
+                    <option value="Alta">Alta</option>
+                    <option value="Urgente">Urgente (Emergencia)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="descripcion">Descripción del Problema / Sugerencia: *</label>
+            <textarea id="descripcion" name="descripcion" required placeholder="Detalla los hechos, lugar o situación..."></textarea>
+        </div>
+
+        <button type="submit" id="submitBtn" class="btn-submit">Enviar Reporte</button>
+    </form>
+
+    <div id="alertBox" class="alert"></div>
+
+    <div class="admin-link-container">
+        <a href="admin.html" class="admin-link">🔒 Acceso Directivos / Administración</a>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyChMBgZFA--PI5cFn1fawrG631XXUxBIqQ",
+        authDomain: "quejas-golfsangil.firebaseapp.com",
+        projectId: "quejas-golfsangil",
+        storageBucket: "quejas-golfsangil.firebasestorage.app",
+        messagingSenderId: "510503700733",
+        appId: "1:510503700733:web:4b75890332a25362c01694",
+        measurementId: "G-3GG4EPSMGF"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('fechaReporte').value = today;
+
+    const form = document.getElementById('feedbackForm');
+    const alertBox = document.getElementById('alertBox');
+    const submitBtn = document.getElementById('submitBtn');
+
+    // Genera un folio de 8 caracteres (sin letras/números confusos como 0, O, 1, I)
+    function generarFolio() {
+        const abc = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+        const bytes = new Uint8Array(8);
+        crypto.getRandomValues(bytes);
+        return Array.from(bytes, b => abc[b % abc.length]).join('');
+    }
+
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Procesando...";
+        alertBox.style.display = 'none';
+
+        const nombre = document.getElementById('nombre').value;
+        const numSocio = document.getElementById('numSocio').value;
+        const domicilio = document.getElementById('domicilio').value;
+        const fechaReporte = document.getElementById('fechaReporte').value;
+        const tipo = document.getElementById('tipo').value;
+        const prioridad = document.getElementById('prioridad').value;
+        const descripcion = document.getElementById('descripcion').value;
+
+        try {
+            // El folio ES el ID del documento; si ya existe (muy improbable), genera otro
+            let folio, ref;
+            for (let i = 0; i < 5; i++) {
+                folio = generarFolio();
+                ref = doc(collection(db, "quejas_sugerencias"), folio);
+                const existe = await getDoc(ref).then(s => s.exists()).catch(() => false);
+                if (!existe) break;
+            }
+
+            await setDoc(ref, {
+                nombre: nombre,
+                numSocio: numSocio,
+                domicilio: domicilio || "N/A",
+                fechaReporte: fechaReporte,
+                tipo: tipo,
+                prioridad: prioridad,
+                descripcion: descripcion,
+                fecha: serverTimestamp(),
+                estado: "Pendiente"
+            });
+
+            let tiempoAtencion = "";
+            if (prioridad === "Alta" || prioridad === "Urgente") {
+                tiempoAtencion = "Estimado socio, dada la relevancia y prioridad de su caso, nuestro equipo de atención lo revisará para darle seguimiento dentro de un plazo estimado de <b>1 a 3 días hábiles</b>.";
+            } else {
+                tiempoAtencion = "Estimado socio, su caso ha sido registrado exitosamente y será atendido por nuestro personal en un periodo habitual de <b>3 a 5 días hábiles</b>.";
+            }
+
+            alertBox.className = "alert alert-success";
+            alertBox.innerHTML = `
+                <div class="alert-title">✅ ¡Reporte Registrado Correctamente!</div>
+                <p style="margin: 5px 0;">Gracias por compartir sus comentarios con nosotros. Guarde su folio para consultar el estatus.</p>
+                <div class="folio-box">FOLIO DE SEGUIMIENTO: #${folio}</div>
+                <p>${tiempoAtencion}</p>
+                <div class="contact-info">
+                    📌 Para cualquier consulta adicional o seguimiento directo, puede comunicarse al número de atención: <b>427 142 2623</b>.
+                </div>
+            `;
+
+            alertBox.style.display = 'block';
+            form.reset();
+            document.getElementById('fechaReporte').value = today;
+            alertBox.scrollIntoView({ behavior: 'smooth' });
+
+        } catch (error) {
+            console.error("Error al guardar: ", error);
+            alertBox.className = "alert alert-error";
+            alertBox.innerHTML = `
+                <div class="alert-title">❌ Error al enviar el reporte</div>
+                <p>Hubo un inconveniente al registrar su reporte en el sistema. Por favor revise su conexión e inténtelo de nuevo.</p>
+            `;
+            alertBox.style.display = 'block';
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Enviar Reporte";
+        }
+    });
+</script>
+
+</body>
+</html>

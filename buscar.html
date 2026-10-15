@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultar Folio - Club de Golf San Gil</title>
+    <style>
+        :root { --royal-blue: #0a1931; --accent-green: #008040; }
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; background-color: var(--royal-blue);
+            background-image: radial-gradient(circle at 50% 30%, #152b52 0%, #0a1931 70%);
+        }
+        .container {
+            background: #fff; padding: 35px; border-radius: 16px; width: 100%; max-width: 520px;
+            box-shadow: 0 15px 35px rgba(0,0,0,.5); border-top: 6px solid #003399;
+        }
+        .header { text-align: center; margin-bottom: 20px; }
+        .header img { max-width: 120px; height: auto; margin-bottom: 12px; }
+        .header h1 { color: #003399; font-size: 22px; margin: 0 0 6px; }
+        .header p { color: #555; font-size: 13px; margin: 0; font-style: italic; }
+        label { display: block; margin-bottom: 6px; font-weight: 600; color: #003399; font-size: 14px; }
+        input[type="text"] {
+            width: 100%; padding: 11px 14px; border: 1px solid #cbd5e1; border-radius: 8px;
+            font-size: 16px; background: #f8fafc; color: #333; text-transform: uppercase; letter-spacing: 1px;
+        }
+        input[type="text"]:focus { border-color: #003399; outline: none; background: #fff; }
+        .btn-submit {
+            background: var(--accent-green); color: #fff; padding: 14px 20px; border: none; border-radius: 8px;
+            cursor: pointer; width: 100%; font-size: 16px; font-weight: bold; margin-top: 14px; transition: background .3s;
+        }
+        .btn-submit:hover { background: #006633; }
+        .btn-submit:disabled { opacity: .6; cursor: not-allowed; }
+        .result { display: none; margin-top: 22px; padding: 18px; border-radius: 12px; font-size: 14px; line-height: 1.7; }
+        .result.ok { background: #f8fafc; border: 1px solid #cbd5e1; }
+        .result.err { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+        .row { display: flex; justify-content: space-between; gap: 10px; border-bottom: 1px solid #e2e8f0; padding: 6px 0; }
+        .row:last-of-type { border-bottom: none; }
+        .row span:first-child { color: #64748b; }
+        .row span:last-child { font-weight: 600; color: #0f172a; text-align: right; }
+        .badge { padding: 2px 10px; border-radius: 999px; color: #fff; font-size: 13px; }
+        .contact { font-size: 13px; color: #475569; border-top: 1px solid #cbd5e1; padding-top: 10px; margin-top: 10px; }
+        .back { text-align: center; margin-top: 25px; border-top: 1px solid #e2e8f0; padding-top: 15px; }
+        .back a { color: #64748b; font-size: 13px; text-decoration: none; font-weight: 500; }
+        .back a:hover { color: #003399; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <img src="San_Gil_sn_Fondo.png" alt="Club de Golf San Gil Logo">
+        <h1>🔍 Consultar Estado de Folio</h1>
+        <p>Ingrese el folio que recibió al enviar su reporte.</p>
+    </div>
+
+    <label for="inputFolio">Número de folio</label>
+    <input type="text" id="inputFolio" placeholder="Ej. A1B2C3D4" maxlength="8" autocomplete="off">
+    <button type="button" class="btn-submit" id="searchBtn">Buscar Estatus</button>
+
+    <div id="result" class="result" aria-live="polite"></div>
+
+    <div class="back"><a href="index.html">← Volver al Buzón de Quejas y Sugerencias</a></div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyChMBgZFA--PI5cFn1fawrG631XXUxBIqQ",
+        authDomain: "quejas-golfsangil.firebaseapp.com",
+        projectId: "quejas-golfsangil",
+        storageBucket: "quejas-golfsangil.firebasestorage.app",
+        messagingSenderId: "510503700733",
+        appId: "1:510503700733:web:4b75890332a25362c01694",
+        measurementId: "G-3GG4EPSMGF"
+    };
+
+    const db = getFirestore(initializeApp(firebaseConfig));
+
+    const input = document.getElementById('inputFolio');
+    const btn = document.getElementById('searchBtn');
+    const result = document.getElementById('result');
+
+    const colores = { 'Pendiente': '#d97706', 'En proceso': '#2563eb', 'Resuelto': '#16a34a' };
+
+    function showError(msg) {
+        result.className = 'result err';
+        result.textContent = msg;
+        result.style.display = 'block';
+    }
+
+    function row(label, value, badgeColor) {
+        const r = document.createElement('div');
+        r.className = 'row';
+        const a = document.createElement('span'); a.textContent = label;
+        const b = document.createElement('span');
+        if (badgeColor) {
+            const s = document.createElement('span');
+            s.className = 'badge'; s.style.background = badgeColor; s.textContent = value;
+            b.appendChild(s);
+        } else {
+            b.textContent = value;
+        }
+        r.append(a, b);
+        return r;
+    }
+
+    async function buscar() {
+        const folio = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+        result.style.display = 'none';
+
+        if (folio.length < 6) {
+            showError('Ingrese su folio completo (8 caracteres). Mínimo 6.');
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = 'Buscando...';
+
+        try {
+            const qs = await getDocs(collection(db, 'quejas_sugerencias'));
+            let d = null;
+            qs.forEach((s) => {
+                if (!d && s.id.toUpperCase().startsWith(folio)) d = s.data();
+            });
+
+            if (!d) {
+                showError('No se encontró ningún reporte con el folio #' + folio + '. Verifique que esté escrito correctamente (' + folio.length + ' caracteres escritos, el folio tiene 8).');
+                return;
+            }
+            const estado = d.estado || 'Pendiente';
+            let fecha = d.fechaReporte || 'Reciente';
+            if (d.fecha && d.fecha.toDate) fecha = d.fecha.toDate().toLocaleDateString('es-MX');
+
+            result.className = 'result ok';
+            result.replaceChildren(
+                row('Folio', '#' + folio),
+                row('Tipo', d.tipo || '—'),
+                row('Prioridad', d.prioridad || '—'),
+                row('Fecha de registro', fecha),
+                row('Estatus actual', estado, colores[estado] || '#64748b')
+            );
+            const c = document.createElement('div');
+            c.className = 'contact';
+            c.textContent = 'Para dudas o seguimiento directo comuníquese al 427 142 2623.';
+            result.appendChild(c);
+            result.style.display = 'block';
+        } catch (e) {
+            console.error(e);
+            showError('Error al consultar la base de datos. Inténtelo de nuevo más tarde.');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Buscar Estatus';
+        }
+    }
+
+    btn.addEventListener('click', buscar);
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') buscar(); });
+
+    // Si llega con ?folio=XXXXXXXX (enlace directo tras enviar el reporte), busca automáticamente
+    const p = new URLSearchParams(location.search).get('folio');
+    if (p) { input.value = p; buscar(); }
+</script>
+</body>
+</html>
