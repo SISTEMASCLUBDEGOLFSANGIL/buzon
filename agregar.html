@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Socio - Club de Golf San Gil</title>
+    <style>
+        :root { --royal-blue: #0a1931; --accent-green: #008040; }
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; background-color: var(--royal-blue);
+            background-image: radial-gradient(circle at 50% 30%, #152b52 0%, #0a1931 70%);
+        }
+
+        .container {
+            background: #fff; padding: 35px; border-radius: 16px; width: 100%; max-width: 520px;
+            box-shadow: 0 15px 35px rgba(0,0,0,.5); border-top: 6px solid #003399;
+        }
+
+        .header { text-align: center; margin-bottom: 20px; }
+        .header img { max-width: 120px; height: auto; margin-bottom: 12px; }
+        .header h1 { color: #003399; font-size: 22px; margin: 0 0 6px; font-weight: 700; }
+        .header p { color: #555; font-size: 13px; margin: 0; font-style: italic; }
+
+        .form-group { margin-bottom: 18px; }
+        label { display: block; margin-bottom: 6px; font-weight: 600; color: #003399; font-size: 14px; }
+
+        input[type="text"], input[type="tel"] {
+            width: 100%; padding: 11px 14px; border: 1px solid #cbd5e1; border-radius: 8px;
+            font-size: 14px; background: #f8fafc; color: #333;
+        }
+        input:focus { border-color: #003399; outline: none; background: #fff; }
+        input.invalid { border-color: #dc2626; background: #fef2f2; }
+
+        .hint { display: block; margin-top: 5px; font-size: 12px; color: #64748b; }
+        .field-error { display: block; margin-top: 5px; font-size: 12px; color: #991b1b; min-height: 0; }
+
+        .btn-submit {
+            background: var(--accent-green); color: #fff; padding: 14px 20px; border: none; border-radius: 8px;
+            cursor: pointer; width: 100%; font-size: 16px; font-weight: bold; margin-top: 6px; transition: background .3s;
+        }
+        .btn-submit:hover { background: #006633; }
+        .btn-submit:disabled { opacity: .6; cursor: not-allowed; }
+
+        .back { text-align: center; margin-top: 25px; border-top: 1px solid #e2e8f0; padding-top: 15px; }
+        .back a { color: #64748b; font-size: 13px; text-decoration: none; font-weight: 500; }
+        .back a:hover { color: #003399; }
+
+        /* Ventana emergente */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,.65);
+            justify-content: center; align-items: center; padding: 20px;
+        }
+        .modal-overlay.open { display: flex; }
+        .modal-box {
+            background: #fff; border-radius: 16px; padding: 30px; width: 100%; max-width: 440px;
+            box-shadow: 0 20px 45px rgba(0,0,0,.45); font-size: 14px; line-height: 1.6;
+            border-top: 6px solid #16a34a;
+        }
+        .modal-box.error { border-top-color: #dc2626; }
+        .modal-title { font-size: 18px; font-weight: bold; margin: 0 0 10px; color: #166534; }
+        .modal-box.error .modal-title { color: #991b1b; }
+        .modal-box p { margin: 6px 0; color: #334155; }
+        .modal-actions { display: flex; gap: 10px; margin-top: 18px; }
+        .modal-actions a, .modal-actions button {
+            flex: 1; text-align: center; text-decoration: none; padding: 12px; border-radius: 8px;
+            font-size: 14px; font-weight: bold; cursor: pointer; border: none;
+        }
+        .btn-primary { background: var(--accent-green); color: #fff; }
+        .btn-primary:hover { background: #006633; }
+        .btn-secondary { background: #1e3a8a; color: #fff; }
+        .btn-secondary:hover { background: #1e40af; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <img src="San_Gil_sn_Fondo.png" alt="Club de Golf San Gil Logo">
+        <h1>Agregar Socio</h1>
+        <p>Registre sus datos para poder enviar reportes en el Buzón de Quejas y Sugerencias.</p>
+    </div>
+
+    <form id="socioForm" autocomplete="off" novalidate>
+        <div class="form-group">
+            <label for="nombre">Nombre completo: *</label>
+            <input type="text" id="nombre" required maxlength="80" placeholder="Ej. Juan Pérez López">
+            <span class="field-error" id="errNombre"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="numSocio">Nro. de Socio: *</label>
+            <input type="text" id="numSocio" required maxlength="20" placeholder="Ej. 1234">
+            <span class="field-error" id="errNumSocio"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="correo">Correo electrónico: *</label>
+            <input type="text" id="correo" required maxlength="100" inputmode="email" placeholder="Ej. juan.perez@correo.com">
+            <span class="field-error" id="errCorreo"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="telefono">Teléfono: *</label>
+            <input type="tel" id="telefono" required maxlength="14" inputmode="numeric" placeholder="Ej. 427 142 2623">
+            <span class="hint">10 dígitos, con lada.</span>
+            <span class="field-error" id="errTelefono"></span>
+        </div>
+
+        <button type="submit" id="submitBtn" class="btn-submit">Guardar Socio</button>
+    </form>
+
+    <div class="back"><a href="index.html">← Volver al Buzón de Quejas y Sugerencias</a></div>
+</div>
+
+<div id="modalOverlay" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div id="modalBox" class="modal-box"></div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyChMBgZFA--PI5cFn1fawrG631XXUxBIqQ",
+        authDomain: "quejas-golfsangil.firebaseapp.com",
+        projectId: "quejas-golfsangil",
+        storageBucket: "quejas-golfsangil.firebasestorage.app",
+        messagingSenderId: "510503700733",
+        appId: "1:510503700733:web:4b75890332a25362c01694",
+        measurementId: "G-3GG4EPSMGF"
+    };
+
+    const db = getFirestore(initializeApp(firebaseConfig));
+
+    // false = la solicitud queda PENDIENTE y un administrador la aprueba (recomendado).
+    // true  = el socio queda dado de alta de inmediato en el catálogo "socios".
+    const ALTA_DIRECTA = true;
+
+    const form = document.getElementById('socioForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const inNombre = document.getElementById('nombre');
+    const inSocio = document.getElementById('numSocio');
+    const inTel = document.getElementById('telefono');
+    const inCorreo = document.getElementById('correo');
+    const overlay = document.getElementById('modalOverlay');
+    const modalBox = document.getElementById('modalBox');
+
+    // Si viene desde el index con ?numSocio=1234, se rellena
+    const pre = new URLSearchParams(location.search).get('numSocio');
+    if (pre) inSocio.value = pre.slice(0, 20);
+
+    // ---------- Ventana emergente ----------
+    function abrirModal(html, esError = false) {
+        modalBox.className = 'modal-box' + (esError ? ' error' : '');
+        modalBox.innerHTML = html;
+        overlay.classList.add('open');
+        const b = modalBox.querySelector('button[data-close]');
+        if (b) b.focus();
+    }
+    function cerrarModal() { overlay.classList.remove('open'); }
+    modalBox.addEventListener('click', (e) => { if (e.target.closest('[data-close]')) cerrarModal(); });
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) cerrarModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') cerrarModal(); });
+
+    // ---------- Validación ----------
+    function marcar(input, errId, msg) {
+        document.getElementById(errId).textContent = msg;
+        input.classList.toggle('invalid', !!msg);
+        return !msg;
+    }
+
+    function validar() {
+        const nombre = inNombre.value.trim().replace(/\s+/g, ' ');
+        const num = inSocio.value.trim();
+        const tel = inTel.value.replace(/\D/g, '');
+        const correo = inCorreo.value.trim().toLowerCase();
+
+        let ok = true;
+        ok = marcar(inCorreo, 'errCorreo',
+            (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(correo))
+                ? 'Escriba un correo electrónico válido.' : '') && ok;
+        ok = marcar(inNombre, 'errNombre',
+            (nombre.length < 5 || nombre.split(' ').length < 2)
+                ? 'Escriba su nombre completo (nombre y apellido).' : '') && ok;
+        ok = marcar(inSocio, 'errNumSocio',
+            (!/^[A-Za-z0-9-]{1,20}$/.test(num))
+                ? 'Use solo letras, números o guiones (sin espacios ni diagonales).' : '') && ok;
+        ok = marcar(inTel, 'errTelefono',
+            (tel.length !== 10) ? 'El teléfono debe tener 10 dígitos.' : '') && ok;
+
+        return { ok, nombre, num, tel, correo };
+    }
+
+    // Solo dígitos, espacios y guiones en teléfono
+    inTel.addEventListener('input', () => { inTel.value = inTel.value.replace(/[^\d\s-]/g, ''); });
+
+    // ---------- Envío ----------
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const { ok, nombre, num, tel, correo } = validar();
+        if (!ok) return;
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Guardando...';
+
+        try {
+            // ¿Ya existe en el catálogo?
+            const existe = await getDoc(doc(db, 'socios', num));
+            if (existe.exists()) {
+                abrirModal(`
+                    <h3 class="modal-title" id="modalTitle">ℹ️ Este número de socio ya está registrado</h3>
+                    <p>Ya puede enviar su reporte en el Buzón de Quejas y Sugerencias. Si sus datos son incorrectos, comuníquese al <b>427 142 2623</b>.</p>
+                    <div class="modal-actions">
+                        <a href="index.html" class="btn-primary">Ir al Buzón</a>
+                    </div>
+                `);
+                return;
+            }
+
+            if (ALTA_DIRECTA) {
+                await setDoc(doc(db, 'socios', num), {
+                    nombre, correo, telefono: tel, fechaAlta: serverTimestamp()
+                });
+            } else {
+                await addDoc(collection(db, 'socios_pendientes'), {
+                    nombre, numSocio: num, correo, telefono: tel,
+                    estado: 'Pendiente', fechaSolicitud: serverTimestamp()
+                });
+            }
+
+            const mensaje = ALTA_DIRECTA
+                ? 'Sus datos fueron registrados. Ya puede enviar su reporte en el Buzón.'
+                : 'Su solicitud fue recibida. Una vez que el club valide sus datos podrá enviar reportes en el Buzón.';
+
+            abrirModal(`
+                <h3 class="modal-title" id="modalTitle">✅ ¡Datos registrados!</h3>
+                <p>${mensaje}</p>
+                <p style="font-size:13px;color:#475569;">Para dudas comuníquese al <b>427 142 2623</b>.</p>
+                <div class="modal-actions">
+                    <a href="index.html" class="btn-primary">Ir al Buzón</a>
+                </div>
+            `);
+            form.reset();
+
+        } catch (err) {
+            console.error('Error al guardar socio:', err);
+            abrirModal(`
+                <h3 class="modal-title" id="modalTitle">❌ No se pudo guardar</h3>
+                <p>Hubo un inconveniente al registrar sus datos. Revise su conexión e inténtelo de nuevo.</p>
+                <div class="modal-actions">
+                    <button type="button" class="btn-primary" data-close>Cerrar</button>
+                </div>
+            `, true);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Guardar Socio';
+        }
+    });
+</script>
+</body>
+</html>

@@ -50,17 +50,9 @@
         .top-actions { display: flex; justify-content: flex-end; margin-bottom: 15px; }
 
         .btn-consultar {
-            background-color: #1e3a8a;
-            color: white;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            transition: background 0.3s;
+            background-color: #1e3a8a; color: white; border: none; padding: 8px 14px;
+            border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer;
+            text-decoration: none; display: inline-block; transition: background 0.3s;
         }
         .btn-consultar:hover { background-color: #1e40af; }
 
@@ -70,71 +62,80 @@
 
         label { display: block; margin-bottom: 6px; font-weight: 600; color: #003399; font-size: 14px; }
 
-        input[type="text"], input[type="date"], select, textarea {
-            width: 100%;
-            padding: 11px 14px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            font-size: 14px;
-            background-color: #f8fafc;
-            color: #333333;
+        input[type="text"], select, textarea {
+            width: 100%; padding: 11px 14px; border: 1px solid #cbd5e1; border-radius: 8px;
+            font-size: 14px; background-color: #f8fafc; color: #333333;
         }
 
-        input[type="text"]:focus, input[type="date"]:focus, select:focus, textarea:focus {
+        input[type="text"]:focus, select:focus, textarea:focus {
             border-color: #003399; outline: none; background-color: #ffffff;
         }
 
+        input[readonly] { background-color: #e9eef5; color: #475569; cursor: not-allowed; }
+
         textarea { resize: vertical; height: 100px; }
 
+        .socio-status { display: block; margin-top: 6px; font-size: 12px; min-height: 16px; }
+        .socio-status.ok { color: #166534; }
+        .socio-status.warn { color: #b45309; }
+        .socio-status.err { color: #991b1b; }
+        .socio-status a { color: #1e3a8a; font-weight: bold; }
+        .socio-status .btn-agregar {
+            display: inline-block; margin-top: 8px; background: #1e3a8a; color: #fff;
+            padding: 9px 14px; border-radius: 6px; text-decoration: none; font-size: 13px;
+        }
+        .socio-status .btn-agregar:hover { background: #1e40af; }
+        .socio-status.warn { font-size: 13px; }
+        .link-agregar { display: inline-block; margin-top: 8px; font-size: 12px; color: #1e3a8a; font-weight: 600; text-decoration: underline; }
+        .link-agregar:hover { color: #003399; }
+
         .btn-submit {
-            background-color: var(--accent-green);
-            color: #ffffff;
-            padding: 14px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            width: 100%;
-            font-size: 16px;
-            font-weight: bold;
-            margin-top: 10px;
-            transition: background 0.3s;
+            background-color: var(--accent-green); color: #ffffff; padding: 14px 20px; border: none;
+            border-radius: 8px; cursor: pointer; width: 100%; font-size: 16px; font-weight: bold;
+            margin-top: 10px; transition: background 0.3s;
         }
         .btn-submit:hover { background-color: #006633; }
         .btn-submit:disabled { opacity: .6; cursor: not-allowed; }
 
-        .alert {
-            margin-top: 20px; padding: 20px; border-radius: 12px; text-align: left;
-            display: none; font-size: 14px; line-height: 1.6;
-        }
-        .alert-success { background-color: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
-        .alert-error { background-color: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
-
-        .alert-title {
-            font-size: 16px; font-weight: bold; margin-bottom: 8px;
-            display: flex; align-items: center; gap: 8px;
-        }
-
-        .folio-box {
-            background: #ffffff; border: 2px dashed #16a34a; padding: 10px; border-radius: 8px;
-            text-align: center; font-size: 18px; font-weight: bold; color: #003399;
-            margin: 12px 0; letter-spacing: 1px;
-        }
-
-        .track-link {
-            display: block; text-align: center; background: #1e3a8a; color: #fff; text-decoration: none;
-            padding: 10px; border-radius: 8px; font-weight: bold; font-size: 14px; margin-bottom: 10px;
-        }
-        .track-link:hover { background: #1e40af; }
-
-        .contact-info {
-            font-size: 13px; color: #475569; border-top: 1px solid #cbd5e1; padding-top: 10px; margin-top: 10px;
-        }
-
-        .admin-link-container {
-            text-align: center; margin-top: 25px; border-top: 1px solid #e2e8f0; padding-top: 15px;
-        }
+        .admin-link-container { text-align: center; margin-top: 25px; border-top: 1px solid #e2e8f0; padding-top: 15px; }
         .admin-link { color: #64748b; font-size: 13px; text-decoration: none; font-weight: 500; }
         .admin-link:hover { color: #003399; }
+
+        /* Ventana emergente */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0; z-index: 100;
+            background: rgba(0, 0, 0, 0.65); justify-content: center; align-items: center; padding: 20px;
+        }
+        .modal-overlay.open { display: flex; }
+
+        .modal-box {
+            background: #fff; border-radius: 16px; padding: 30px; width: 100%; max-width: 460px;
+            max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 45px rgba(0,0,0,.45);
+            font-size: 14px; line-height: 1.6; border-top: 6px solid #16a34a; text-align: left;
+        }
+        .modal-box.error { border-top-color: #dc2626; }
+
+        .modal-title { font-size: 18px; font-weight: bold; margin: 0 0 10px; color: #166534; }
+        .modal-box.error .modal-title { color: #991b1b; }
+        .modal-box p { margin: 6px 0; color: #334155; }
+
+        .folio-box {
+            background: #f0fdf4; border: 2px dashed #16a34a; padding: 12px; border-radius: 8px;
+            text-align: center; font-size: 20px; font-weight: bold; color: #003399;
+            margin: 14px 0; letter-spacing: 2px;
+        }
+
+        .contact-info { font-size: 13px; color: #475569; border-top: 1px solid #cbd5e1; padding-top: 10px; margin-top: 12px; }
+
+        .modal-actions { display: flex; gap: 10px; margin-top: 18px; }
+        .modal-actions a, .modal-actions button {
+            flex: 1; text-align: center; text-decoration: none; padding: 12px; border-radius: 8px;
+            font-size: 14px; font-weight: bold; cursor: pointer; border: none;
+        }
+        .btn-primary { background: var(--accent-green); color: #fff; }
+        .btn-primary:hover { background: #006633; }
+        .btn-secondary { background: #1e3a8a; color: #fff; }
+        .btn-secondary:hover { background: #1e40af; }
     </style>
 </head>
 <body>
@@ -146,7 +147,6 @@
 
 <div class="container">
     <div class="top-actions">
-        <!-- Ahora redirige a buscar.html -->
         <a href="buscar.html" class="btn-consultar">🔍 Consultar Folio</a>
     </div>
 
@@ -156,27 +156,23 @@
         <p>Su experiencia es nuestra prioridad. Por favor, compártanos sus comentarios para seguir mejorando.</p>
     </div>
 
-    <form id="feedbackForm">
+    <form id="feedbackForm" autocomplete="off">
         <div class="form-row">
-            <div class="form-group" style="flex: 2;">
-                <label for="nombre">Nombre del Socio / Visitante: *</label>
-                <input type="text" id="nombre" name="nombre" required placeholder="Ej. Juan Pérez">
-            </div>
             <div class="form-group" style="flex: 1;">
                 <label for="numSocio">Nro. de Socio: *</label>
                 <input type="text" id="numSocio" name="numSocio" required placeholder="Ej. 1234">
             </div>
+            <div class="form-group" style="flex: 1;">
+                <label for="fechaReporte">Fecha del Reporte:</label>
+                <input type="text" id="fechaReporte" name="fechaReporte" readonly tabindex="-1">
+            </div>
         </div>
 
-        <div class="form-row">
-            <div class="form-group" style="flex: 2;">
-                <label for="domicilio">Domicilio / Ubicación en el Club:</label>
-                <input type="text" id="domicilio" name="domicilio" placeholder="Ej. Villa 15 / Hoyo 4">
-            </div>
-            <div class="form-group" style="flex: 1;">
-                <label for="fechaReporte">Fecha del Reporte: *</label>
-                <input type="date" id="fechaReporte" name="fechaReporte" required>
-            </div>
+        <div class="form-group">
+            <label for="nombre">Nombre del Socio:</label>
+            <input type="text" id="nombre" name="nombre" readonly tabindex="-1" placeholder="Se completa al ingresar su Nro. de Socio">
+            <span id="socioStatus" class="socio-status" aria-live="polite"></span>
+            <a id="linkAgregar" class="link-agregar" href="agregar.html">¿Aún no está registrado como socio? Agregar mis datos</a>
         </div>
 
         <div class="form-row">
@@ -208,11 +204,14 @@
         <button type="submit" id="submitBtn" class="btn-submit">Enviar Reporte</button>
     </form>
 
-    <div id="alertBox" class="alert"></div>
-
     <div class="admin-link-container">
         <a href="admin.html" class="admin-link">🔒 Acceso Directivos / Administración</a>
     </div>
+</div>
+
+<!-- Ventana emergente de confirmación / error -->
+<div id="modalOverlay" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div id="modalBox" class="modal-box"></div>
 </div>
 
 <script type="module">
@@ -232,14 +231,121 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('fechaReporte').value = today;
+    // Catálogo de socios: colección "socios", ID del documento = Nro. de socio, campo "nombre"
+    const COLECCION_SOCIOS = "socios";
 
     const form = document.getElementById('feedbackForm');
-    const alertBox = document.getElementById('alertBox');
     const submitBtn = document.getElementById('submitBtn');
+    const inputSocio = document.getElementById('numSocio');
+    const inputNombre = document.getElementById('nombre');
+    const inputFecha = document.getElementById('fechaReporte');
+    const socioStatus = document.getElementById('socioStatus');
+    const overlay = document.getElementById('modalOverlay');
+    const modalBox = document.getElementById('modalBox');
 
-    // Genera un folio de 8 caracteres (sin letras/números confusos como 0, O, 1, I)
+    // ---------- Fecha automática (hora local del usuario, no editable) ----------
+    function fechaHoy() {
+        const d = new Date();
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return { iso: `${y}-${m}-${day}`, texto: `${day}/${m}/${y}` };
+    }
+    inputFecha.value = fechaHoy().texto;
+
+    // ---------- Ventana emergente ----------
+    function abrirModal(html, esError = false) {
+        modalBox.className = 'modal-box' + (esError ? ' error' : '');
+        modalBox.innerHTML = html;
+        overlay.classList.add('open');
+        const cerrar = modalBox.querySelector('[data-close]');
+        if (cerrar) cerrar.focus();
+    }
+    function cerrarModal() { overlay.classList.remove('open'); }
+
+    modalBox.addEventListener('click', (e) => { if (e.target.closest('[data-close]')) cerrarModal(); });
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) cerrarModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') cerrarModal(); });
+
+    // ---------- Búsqueda automática del socio ----------
+    let socioValido = false;
+    let lookupId = 0;
+    let timer = null;
+    let ultimoNum = null;   // último número ya consultado con resultado (ok / no)
+    let ultimoRes = null;
+    let buscandoNum = null; // número en consulta en este momento
+
+    function setStatus(clase, contenido) {
+        socioStatus.className = 'socio-status ' + clase;
+        socioStatus.replaceChildren(...contenido);
+    }
+
+    function limpiarSocio() {
+        socioValido = false;
+        inputNombre.value = '';
+    }
+
+    async function buscarSocio() {
+        const num = inputSocio.value.trim();
+
+        // Si este número ya se consultó (o se está consultando), no tocar el mensaje:
+        // así el botón "Agregar" no desaparece al hacer clic.
+        if (num && (num === buscandoNum || (num === ultimoNum && ultimoRes))) return;
+
+        const miId = ++lookupId;
+
+        if (!num) { limpiarSocio(); setStatus('', []); return; }
+        buscandoNum = num;
+        if (num.includes('/')) {
+            limpiarSocio();
+            setStatus('err', [document.createTextNode('El número de socio no es válido.')]);
+            return;
+        }
+
+        setStatus('', [document.createTextNode('Buscando socio...')]);
+
+        try {
+            const snap = await getDoc(doc(db, COLECCION_SOCIOS, num));
+            if (miId !== lookupId) return; // llegó una búsqueda más reciente
+
+            if (snap.exists() && snap.data().nombre) {
+                inputNombre.value = snap.data().nombre;
+                socioValido = true;
+                buscandoNum = null; ultimoNum = num; ultimoRes = 'ok';
+                setStatus('ok', [document.createTextNode('✔ Socio encontrado.')]);
+            } else {
+                limpiarSocio();
+                buscandoNum = null; ultimoNum = num; ultimoRes = 'no';
+                const a = document.createElement('a');
+                a.href = 'agregar.html?numSocio=' + encodeURIComponent(num);
+                a.className = 'btn-agregar';
+                a.textContent = '➕ Agregar mis datos de socio';
+                setStatus('warn', [
+                    document.createTextNode('Este número de socio no está registrado en el catálogo.'),
+                    document.createElement('br'),
+                    a
+                ]);
+            }
+        } catch (err) {
+            if (miId !== lookupId) return;
+            console.error('Error al buscar socio:', err);
+            buscandoNum = null; ultimoNum = null; ultimoRes = null;
+            limpiarSocio();
+            setStatus('err', [document.createTextNode('No se pudo consultar el catálogo de socios. Inténtelo de nuevo.')]);
+        }
+    }
+
+    inputSocio.addEventListener('input', () => {
+        ultimoNum = null; ultimoRes = null; buscandoNum = null;
+        const n = inputSocio.value.trim();
+        document.getElementById('linkAgregar').href = 'agregar.html' + (n ? '?numSocio=' + encodeURIComponent(n) : '');
+        limpiarSocio();
+        clearTimeout(timer);
+        timer = setTimeout(buscarSocio, 500);
+    });
+    inputSocio.addEventListener('blur', () => { clearTimeout(timer); buscarSocio(); });
+
+    // ---------- Folio ----------
     function generarFolio() {
         const abc = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
         const bytes = new Uint8Array(8);
@@ -247,23 +353,35 @@
         return Array.from(bytes, b => abc[b % abc.length]).join('');
     }
 
+    // ---------- Envío ----------
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
 
+        if (!socioValido) {
+            abrirModal(`
+                <h3 class="modal-title" id="modalTitle">⚠️ Verifique su número de socio</h3>
+                <p>Para enviar el reporte es necesario que su número de socio esté registrado en el catálogo. Si aún no lo está, puede agregar sus datos.</p>
+                <div class="modal-actions">
+                    <a href="agregar.html?numSocio=${encodeURIComponent(inputSocio.value.trim())}" class="btn-secondary">➕ Agregar mis datos</a>
+                    <button type="button" class="btn-primary" data-close>Cerrar</button>
+                </div>
+            `, true);
+            return;
+        }
+
         submitBtn.disabled = true;
         submitBtn.textContent = "Procesando...";
-        alertBox.style.display = 'none';
 
-        const nombre = document.getElementById('nombre').value;
-        const numSocio = document.getElementById('numSocio').value;
-        const domicilio = document.getElementById('domicilio').value;
-        const fechaReporte = document.getElementById('fechaReporte').value;
+        const fecha = fechaHoy();
+        inputFecha.value = fecha.texto;
+
+        const numSocio = inputSocio.value.trim();
+        const nombre = inputNombre.value;
         const tipo = document.getElementById('tipo').value;
         const prioridad = document.getElementById('prioridad').value;
         const descripcion = document.getElementById('descripcion').value;
 
         try {
-            // El folio ES el ID del documento; si ya existe (muy improbable), genera otro
             let folio, ref;
             for (let i = 0; i < 5; i++) {
                 folio = generarFolio();
@@ -275,8 +393,7 @@
             await setDoc(ref, {
                 nombre: nombre,
                 numSocio: numSocio,
-                domicilio: domicilio || "N/A",
-                fechaReporte: fechaReporte,
+                fechaReporte: fecha.iso,
                 tipo: tipo,
                 prioridad: prioridad,
                 descripcion: descripcion,
@@ -284,37 +401,40 @@
                 estado: "Pendiente"
             });
 
-            let tiempoAtencion = "";
-            if (prioridad === "Alta" || prioridad === "Urgente") {
-                tiempoAtencion = "Estimado socio, dada la relevancia y prioridad de su caso, nuestro equipo de atención lo revisará para darle seguimiento dentro de un plazo estimado de <b>1 a 3 días hábiles</b>.";
-            } else {
-                tiempoAtencion = "Estimado socio, su caso ha sido registrado exitosamente y será atendido por nuestro personal en un periodo habitual de <b>3 a 5 días hábiles</b>.";
-            }
+            const tiempoAtencion = (prioridad === "Alta" || prioridad === "Urgente")
+                ? "Dada la relevancia y prioridad de su caso, nuestro equipo de atención lo revisará conforme disponibilidad <b>Agradecemos su comprensión</b>."
+                : "Su caso ha sido registrado exitosamente.<b></b>.";
 
-            alertBox.className = "alert alert-success";
-            alertBox.innerHTML = `
-                <div class="alert-title">✅ ¡Reporte Registrado Correctamente!</div>
-                <p style="margin: 5px 0;">Gracias por compartir sus comentarios con nosotros. Guarde su folio para consultar el estatus.</p>
-                <div class="folio-box">FOLIO DE SEGUIMIENTO: #${folio}</div>
+            abrirModal(`
+                <h3 class="modal-title" id="modalTitle">✅ ¡Reporte Registrado Correctamente!</h3>
+                <p>Gracias por compartir sus comentarios con nosotros, <b></b>. Guarde su folio para consultar el estatus.</p>
+                <div class="folio-box">FOLIO: #${folio}</div>
                 <p>${tiempoAtencion}</p>
                 <div class="contact-info">
-                    📌 Para cualquier consulta adicional o seguimiento directo, puede comunicarse al número de atención: <b>427 142 2623</b>.
+                    📌 Para cualquier consulta adicional o seguimiento directo, puede comunicarse al <b>427 142 2623</b>.
                 </div>
-            `;
+                <div class="modal-actions">
+                    
+                    <button type="button" class="btn-primary" data-close>Aceptar</button>
+                </div>
+            `);
+            // Nombre insertado como texto (evita HTML inyectado)
+            modalBox.querySelector('p b').textContent = nombre;
 
-            alertBox.style.display = 'block';
             form.reset();
-            document.getElementById('fechaReporte').value = today;
-            alertBox.scrollIntoView({ behavior: 'smooth' });
+            limpiarSocio();
+            setStatus('', []);
+            inputFecha.value = fechaHoy().texto;
 
         } catch (error) {
             console.error("Error al guardar: ", error);
-            alertBox.className = "alert alert-error";
-            alertBox.innerHTML = `
-                <div class="alert-title">❌ Error al enviar el reporte</div>
+            abrirModal(`
+                <h3 class="modal-title" id="modalTitle">❌ Error al enviar el reporte</h3>
                 <p>Hubo un inconveniente al registrar su reporte en el sistema. Por favor revise su conexión e inténtelo de nuevo.</p>
-            `;
-            alertBox.style.display = 'block';
+                <div class="modal-actions">
+                    <button type="button" class="btn-primary" data-close>Cerrar</button>
+                </div>
+            `, true);
         } finally {
             submitBtn.disabled = false;
             submitBtn.textContent = "Enviar Reporte";

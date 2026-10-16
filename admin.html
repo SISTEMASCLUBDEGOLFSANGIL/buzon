@@ -6,6 +6,8 @@
     <title>Panel de Control - Club de Golf San Gil</title>
     <!-- Chart.js para la gráfica de pastel -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- SheetJS para exportar reportes a Excel -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
         :root {
             --royal-blue: #0a1931;
@@ -45,7 +47,7 @@
         #loginCard h2 { color: var(--royal-blue); margin-top: 0; text-align: center; font-size: 20px; }
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 6px; font-weight: 600; color: var(--royal-blue); font-size: 13px; }
-        input[type="text"], input[type="email"], input[type="password"], select {
+        input[type="text"], input[type="email"], input[type="password"], input[type="tel"], select {
             width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; background-color: #f8fafc;
         }
 
@@ -96,26 +98,10 @@
             margin-bottom: 20px;
         }
 
-        .print-header img {
-            max-width: 110px;
-            height: auto;
-        }
-
-        .print-header-info {
-            text-align: right;
-        }
-
-        .print-header-info h2 {
-            margin: 0;
-            color: #003399;
-            font-size: 18px;
-        }
-
-        .print-header-info p {
-            margin: 3px 0 0 0;
-            font-size: 12px;
-            color: #475569;
-        }
+        .print-header img { max-width: 110px; height: auto; }
+        .print-header-info { text-align: right; }
+        .print-header-info h2 { margin: 0; color: #003399; font-size: 18px; }
+        .print-header-info p { margin: 3px 0 0 0; font-size: 12px; color: #475569; }
 
         /* SECCIONES DE SISTEMAS */
         .admin-panel-grid {
@@ -150,10 +136,16 @@
             align-items: center;
             margin-top: 20px;
             margin-bottom: 10px;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         .btn-download-pdf {
             background-color: #0284c7; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer;
+        }
+
+        .btn-new {
+            background-color: var(--accent-green); color: white; border: none; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer;
         }
 
         /* TABLAS Y BOTONES ALINEADOS EN FILA */
@@ -178,6 +170,54 @@
             background-color: #dc2626; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold;
         }
 
+        .btn-wa-sm {
+            background-color: #16a34a; color: white; border: none; padding: 7px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold;
+        }
+
+        /* REPORTES POR PRIORIDAD */
+        .chk { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #334155; cursor: pointer; margin-bottom: 12px; }
+        .report-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+        .btn-rep {
+            border: none; color: white; padding: 10px 16px; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer;
+        }
+        .btn-rep.general { background: #1e3a8a; }
+        .btn-rep.urg { background: #b91c1c; }
+        .btn-rep.alta { background: #ea580c; }
+        .btn-rep.media { background: #ca8a04; }
+        .btn-rep.baja { background: #16a34a; }
+        .rep-rows { display: grid; gap: 8px; }
+        .rep-row {
+            display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;
+            border: 1px solid #e2e8f0; border-left: 5px solid #1e3a8a; border-radius: 8px; padding: 8px 12px; background: #f8fafc;
+        }
+        .rep-row.r-urg { border-left-color: #b91c1c; }
+        .rep-row.r-alta { border-left-color: #ea580c; }
+        .rep-row.r-media { border-left-color: #ca8a04; }
+        .rep-row.r-baja { border-left-color: #16a34a; }
+        .rep-name { font-size: 14px; font-weight: 700; color: #0a1931; }
+        .rep-btns { display: flex; gap: 8px; }
+        .btn-rep.pdf { background: #1e3a8a; padding: 8px 14px; }
+        .btn-rep.xls { background: #15803d; padding: 8px 14px; }
+
+        #reportePrint { display: none; }
+        .rep-title { color: #003399; font-size: 18px; margin: 0 0 4px; }
+        .rep-meta { font-size: 11px; color: #475569; margin-bottom: 10px; line-height: 1.5; }
+        .rep-table { width: 100%; border-collapse: collapse; font-size: 10.5px; }
+        .rep-table th {
+            background: #003399; color: #fff; padding: 6px; text-align: left;
+            -webkit-print-color-adjust: exact; print-color-adjust: exact;
+        }
+        .rep-table td { border-bottom: 1px solid #cbd5e1; padding: 6px; vertical-align: top; }
+        .rep-table tr { page-break-inside: avoid; }
+        .prio-urgente { color: #b91c1c; font-weight: bold; }
+        .prio-alta { color: #ea580c; font-weight: bold; }
+        .prio-media { color: #a16207; font-weight: bold; }
+        .prio-baja { color: #15803d; font-weight: bold; }
+
+        /* CATÁLOGO DE SOCIOS */
+        .search-input { width: 100%; margin-bottom: 6px; }
+        .count { font-size: 12px; color: #64748b; margin-bottom: 4px; }
+
         /* SECCIÓN MÉTRICAS Y GRÁFICAS */
         .analytics-section { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 25px; }
         .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
@@ -192,7 +232,7 @@
         .ticket-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-top: 4px solid #003399; }
         .ticket-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .ticket-id { font-weight: bold; color: #64748b; font-size: 12px; }
-        
+
         .badge { padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
         .badge-queja { background-color: #fee2e2; color: #991b1b; }
         .badge-sugerencia { background-color: #e0f2fe; color: #0369a1; }
@@ -213,20 +253,50 @@
         .btn-pdf { background-color: var(--accent-green); color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer; }
         .btn-logout { background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
 
+        /* VENTANAS EMERGENTES */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,.65);
+            justify-content: center; align-items: center; padding: 20px;
+        }
+        .modal-overlay.open { display: flex; }
+        .modal-box {
+            background: #fff; border-radius: 16px; padding: 28px; width: 100%; max-width: 440px;
+            max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 45px rgba(0,0,0,.45);
+            border-top: 6px solid #003399; font-size: 14px; line-height: 1.6;
+        }
+        .modal-box h3 { margin: 0 0 10px; color: #003399; font-size: 18px; }
+        .modal-box p { margin: 6px 0; color: #334155; }
+        .modal-actions { display: flex; gap: 10px; margin-top: 18px; justify-content: flex-end; }
+        .btn-m { border: none; border-radius: 8px; padding: 10px 16px; font-size: 14px; font-weight: bold; cursor: pointer; }
+        .btn-m:disabled { opacity: .6; cursor: not-allowed; }
+        .btn-m-primary { background: #008040; color: #fff; }
+        .btn-m-primary:hover:not(:disabled) { background: #006633; }
+        .btn-m-danger { background: #dc2626; color: #fff; }
+        .btn-m-light { background: #e2e8f0; color: #334155; }
+        .msg-error { color: #991b1b; font-size: 13px; margin-top: 8px; min-height: 18px; }
+
         /* FORMATO DE IMPRESIÓN EXCLUSIVO */
         @media print {
-            header, .welcome-bar, .btn-pdf, .btn-logout, .btn-home, .btn-filter, .btn-download-pdf, .ticket-actions, #loginWrapper, .analytics-section, .admin-panel-grid { display: none !important; }
-            
+            header, .welcome-bar, .btn-pdf, .btn-logout, .btn-home, .btn-filter, .btn-download-pdf, .ticket-actions, #loginWrapper, .analytics-section, .admin-panel-grid, .modal-overlay, .no-print, #reportesAtencion { display: none !important; }
+
             body { background-color: white; color: black; }
             .container { max-width: 100%; margin: 0; padding: 0; }
 
             .print-header { display: flex !important; }
 
-            body.print-socios-only .tickets-grid,
-            body.print-socios-only #viewTitle,
-            body.print-socios-only #foliosTableContainer { display: none !important; }
-
             .ticket-card { page-break-inside: avoid; border: 1px solid #cbd5e1; box-shadow: none; margin-bottom: 15px; }
+
+            /* Impresión normal: no incluir el catálogo */
+            body:not(.print-socios) #catalogoSocios { display: none !important; }
+
+            /* Impresión del catálogo de socios */
+            body.print-socios .container > *:not(.print-header):not(#catalogoSocios) { display: none !important; }
+            body.print-socios #catalogoBody { display: block !important; }
+            body.print-socios .col-actions { display: none !important; }
+
+            /* Impresión de reportes por prioridad */
+            body.print-reporte .container > *:not(.print-header):not(#reportePrint) { display: none !important; }
+            body.print-reporte #reportePrint { display: block !important; }
         }
     </style>
 </head>
@@ -294,9 +364,13 @@
                             <label for="deptNombre">Nombre del Área:</label>
                             <input type="text" id="deptNombre" required placeholder="Ej. Seguridad y Vigilancia">
                         </div>
+                        <div class="form-group">
+                            <label for="deptTelefono">WhatsApp del Área Encargada (10 dígitos):</label>
+                            <input type="tel" id="deptTelefono" inputmode="numeric" maxlength="14" placeholder="Ej. 427 123 4567">
+                        </div>
                         <button type="submit" class="btn-action">Guardar Departamento</button>
                     </form>
-                    
+
                     <button type="button" class="btn-toggle-view" onclick="toggleDeptTable()">📂 Mostrar / Ocultar Departamentos</button>
 
                     <div id="deptTableContainer" style="display:none; margin-top:15px;">
@@ -305,6 +379,7 @@
                             <thead>
                                 <tr>
                                     <th>Nombre del Departamento</th>
+                                    <th>WhatsApp</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
@@ -383,23 +458,83 @@
                 </div>
             </div>
 
-            <!-- LISTADOS EXCLUSIVOS DE SISTEMAS (SOCIOS Y FOLIOS) -->
-            <div id="sistemasLists" style="display:none; margin-bottom: 30px;">
-                <div class="table-header-flex">
-                    <h3 style="color:#0a1931; margin:0;">📋 Listado Único de Socios Registrados</h3>
-                    <button class="btn-download-pdf" onclick="downloadSociosList()">📄 Descargar PDF</button>
+            <!-- REPORTES POR NIVEL DE PRIORIDAD (Atención a Socios y Sistemas) -->
+            <div id="reportesAtencion" class="admin-box" style="display:none; margin-bottom:25px;">
+                <h4>📑 Reportes por Nivel de Prioridad</h4>
+                <p style="font-size:12px; color:#64748b; margin:0 0 12px;">
+                    Cada reporte se ordena de mayor a menor urgencia. <b>Excel</b> se descarga directamente; para <b>PDF</b> se abre la ventana de impresión: elija <b>"Guardar como PDF"</b>.
+                </p>
+                <label class="chk"><input type="checkbox" id="chkResueltos"> Incluir casos resueltos</label>
+                <div class="rep-rows">
+                    <div class="rep-row">
+                        <span class="rep-name">📋 Reporte General (todas las prioridades)</span>
+                        <span class="rep-btns">
+                            <button type="button" class="btn-rep pdf" onclick="generarReporte('General')">📄 PDF</button>
+                            <button type="button" class="btn-rep xls" onclick="descargarExcel('General')">📊 Excel</button>
+                        </span>
+                    </div>
+                    <div class="rep-row r-urg">
+                        <span class="rep-name">🔴 Prioridad Urgente</span>
+                        <span class="rep-btns">
+                            <button type="button" class="btn-rep pdf" onclick="generarReporte('Urgente')">📄 PDF</button>
+                            <button type="button" class="btn-rep xls" onclick="descargarExcel('Urgente')">📊 Excel</button>
+                        </span>
+                    </div>
+                    <div class="rep-row r-alta">
+                        <span class="rep-name">🟠 Prioridad Alta</span>
+                        <span class="rep-btns">
+                            <button type="button" class="btn-rep pdf" onclick="generarReporte('Alta')">📄 PDF</button>
+                            <button type="button" class="btn-rep xls" onclick="descargarExcel('Alta')">📊 Excel</button>
+                        </span>
+                    </div>
+                    <div class="rep-row r-media">
+                        <span class="rep-name">🟡 Prioridad Media</span>
+                        <span class="rep-btns">
+                            <button type="button" class="btn-rep pdf" onclick="generarReporte('Media')">📄 PDF</button>
+                            <button type="button" class="btn-rep xls" onclick="descargarExcel('Media')">📊 Excel</button>
+                        </span>
+                    </div>
+                    <div class="rep-row r-baja">
+                        <span class="rep-name">🟢 Prioridad Baja</span>
+                        <span class="rep-btns">
+                            <button type="button" class="btn-rep pdf" onclick="generarReporte('Baja')">📄 PDF</button>
+                            <button type="button" class="btn-rep xls" onclick="descargarExcel('Baja')">📊 Excel</button>
+                        </span>
+                    </div>
                 </div>
-                <table class="data-table" id="sociosTable">
-                    <thead>
-                        <tr>
-                            <th>Nro. Socio (ID)</th>
-                            <th>Nombre del Socio</th>
-                            <th>Domicilio / Ubicación</th>
-                        </tr>
-                    </thead>
-                    <tbody id="sociosTableBody"></tbody>
-                </table>
+            </div>
 
+            <!-- CATÁLOGO DE SOCIOS (Atención a Socios y Sistemas) -->
+            <div id="catalogoSocios" style="display:none; margin-bottom:30px;">
+                <div class="table-header-flex">
+                    <h3 style="color:#0a1931; margin:0;">📇 Catálogo de Socios</h3>
+                    <div class="no-print" style="display:flex; gap:8px; flex-wrap:wrap;">
+                        <button type="button" class="btn-download-pdf" onclick="downloadSociosList()">📄 Descargar PDF</button>
+                        <button type="button" class="btn-new" id="newSocioBtn">➕ Nuevo socio</button>
+                    </div>
+                </div>
+                <button type="button" class="btn-toggle-view no-print" onclick="toggleCatalogo()">📂 Mostrar / Ocultar Catálogo</button>
+
+                <div id="catalogoBody" style="display:none; margin-top:10px;">
+                    <input type="text" id="socioSearch" class="search-input no-print" placeholder="Buscar por número, nombre, correo o teléfono...">
+                    <div id="socioCount" class="count no-print"></div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Nro. Socio</th>
+                                <th>Nombre</th>
+                                <th>Correo</th>
+                                <th>Teléfono</th>
+                                <th class="col-actions no-print">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sociosTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- LISTADO EXCLUSIVO DE SISTEMAS (FOLIOS) -->
+            <div id="sistemasLists" style="display:none; margin-bottom: 30px;">
                 <div id="foliosTableContainer">
                     <h3 style="color:#0a1931; margin-top: 25px;">📄 Control General de Folios</h3>
                     <table class="data-table">
@@ -420,13 +555,18 @@
 
             <h3 id="viewTitle">Cargando registros...</h3>
             <div id="ticketsContainer" class="tickets-grid"></div>
+
+            <!-- Contenedor del reporte por prioridad (solo visible al imprimir) -->
+            <div id="reportePrint"></div>
         </div>
     </div>
+
+    <div id="modalOverlay" class="modal-overlay" role="dialog" aria-modal="true"></div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, collection, getDocs, addDoc, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, addDoc, setDoc, doc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     // Pega aquí tus credenciales reales de Firebase
 const firebaseConfig = {
@@ -457,17 +597,87 @@ const firebaseConfig = {
     const dashboardAnalytics = document.getElementById('dashboardAnalytics');
     const sistemasAdminForms = document.getElementById('sistemasAdminForms');
     const sistemasLists = document.getElementById('sistemasLists');
+    const reportesAtencion = document.getElementById('reportesAtencion');
+    const catalogoSocios = document.getElementById('catalogoSocios');
     const viewTitle = document.getElementById('viewTitle');
     const ticketsContainer = document.getElementById('ticketsContainer');
 
-    let currentRole = ''; 
+    let currentRole = '';
     let showOnlyPending = false;
     let myChart = null;
 
-    let AREAS_LISTA = []; 
+    let AREAS_LISTA = [];   // nombres de áreas
+    let AREAS_TEL = {};     // nombre del área -> teléfono (10 dígitos)
+    let DEPTS = {};         // id -> {nombre, telefono}
+    let USERS = {};         // id -> {email, perfil}
+    let TICKETS = {};       // id -> datos del reporte
+    let SOCIOS = [];        // catálogo de socios
 
     const USUARIO_SISTEMAS_BASE = { id: "base_sistemas", email: "sistemas@clubdegolfsangil.com", perfil: "Sistemas / Super Admin" };
 
+    // ---------- Utilidades ----------
+    // Escapa texto de usuarios antes de insertarlo como HTML (evita código malicioso en los reportes)
+    const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+    function el(tag, props = {}, ...kids) {
+        const e = document.createElement(tag);
+        for (const [k, v] of Object.entries(props)) {
+            if (k === 'class') e.className = v;
+            else if (k === 'text') e.textContent = v;
+            else if (k.startsWith('on')) e.addEventListener(k.slice(2).toLowerCase(), v);
+            else e.setAttribute(k, v);
+        }
+        kids.flat().filter(c => c !== null && c !== undefined && c !== false).forEach(c => e.append(c));
+        return e;
+    }
+
+    // Teléfono: acepta 10 dígitos (también con 52 / 521 al inicio) y devuelve 10 dígitos o null
+    function telefono10(valor) {
+        let d = String(valor || '').replace(/\D/g, '');
+        if (d.length === 13 && d.startsWith('521')) d = d.slice(3);
+        else if (d.length === 12 && d.startsWith('52')) d = d.slice(2);
+        return d.length === 10 ? d : null;
+    }
+
+    function formatoTel(t) {
+        const d = String(t || '').replace(/\D/g, '');
+        return d.length === 10 ? `${d.slice(0,3)} ${d.slice(3,6)} ${d.slice(6)}` : (t || '—');
+    }
+
+    // ---------- Ventanas emergentes ----------
+    const overlay = document.getElementById('modalOverlay');
+
+    function mostrarModal(nodo) {
+        overlay.replaceChildren(nodo);
+        overlay.classList.add('open');
+        const first = nodo.querySelector('input:not(:disabled), button');
+        if (first) first.focus();
+    }
+    function cerrarModal() { overlay.classList.remove('open'); overlay.replaceChildren(); }
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) cerrarModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay.classList.contains('open')) cerrarModal(); });
+
+    function modalConfirmar(titulo, contenido, textoAceptar, onAceptar, peligro = false) {
+        const no = el('button', { type: 'button', class: 'btn-m btn-m-light', onclick: cerrarModal }, 'Cancelar');
+        const si = el('button', { type: 'button', class: 'btn-m ' + (peligro ? 'btn-m-danger' : 'btn-m-primary'), onclick: () => { cerrarModal(); onAceptar(); } }, textoAceptar);
+        mostrarModal(el('div', { class: 'modal-box' }, el('h3', { text: titulo }), contenido, el('div', { class: 'modal-actions' }, no, si)));
+    }
+
+    function modalAviso(titulo, texto) {
+        mostrarModal(el('div', { class: 'modal-box' },
+            el('h3', { text: titulo }), el('p', { text: texto }),
+            el('div', { class: 'modal-actions' }, el('button', { type: 'button', class: 'btn-m btn-m-primary', onclick: cerrarModal }, 'Entendido'))));
+    }
+
+    // ---------- Impresión por modos ----------
+    function imprimirModo(clase) {
+        document.body.classList.add(clase);
+        const quitar = () => { document.body.classList.remove(clase); window.removeEventListener('afterprint', quitar); };
+        window.addEventListener('afterprint', quitar);
+        window.print();
+    }
+
+    // ---------- Sesión ----------
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             loginWrapper.style.display = 'none';
@@ -481,7 +691,7 @@ const firebaseConfig = {
             if (email.includes('contacto@clubdegolfsangil.com')) {
                 currentRole = 'atencion';
                 welcomeBar.textContent = "Bienvenido: Atención a Socios";
-                roleTag.textContent = 'Perfil: Atención a Socios (Gestión & Estatus)';
+                roleTag.textContent = 'Perfil: Atención a Socios (Gestión, Reportes & Catálogo)';
                 dashboardAnalytics.style.display = 'none';
                 sistemasAdminForms.style.display = 'none';
                 sistemasLists.style.display = 'none';
@@ -509,6 +719,12 @@ const firebaseConfig = {
                 filterBtn.style.display = 'none';
                 viewTitle.textContent = '⚙️ Panel de Control Total y Tickets';
             }
+
+            // Reportes por prioridad y catálogo de socios: Atención a Socios y Sistemas
+            const gestionaSocios = (currentRole === 'atencion' || currentRole === 'superadmin');
+            reportesAtencion.style.display = 'block'; // Atención, Dirección y Sistemas
+            catalogoSocios.style.display = gestionaSocios ? 'block' : 'none';
+            if (gestionaSocios) loadSocios();
 
             loadData();
         } else {
@@ -547,22 +763,123 @@ const firebaseConfig = {
         container.style.display = (container.style.display === 'none') ? 'block' : 'none';
     };
 
-    // GUARDAR NUEVO DEPARTAMENTO EN FIRESTORE
+    window.toggleCatalogo = function() {
+        const c = document.getElementById('catalogoBody');
+        c.style.display = (c.style.display === 'none') ? 'block' : 'none';
+    };
+
+    // ---------- DEPARTAMENTOS (con WhatsApp del área) ----------
     document.getElementById('addDeptForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const nombreDept = document.getElementById('deptNombre').value.trim();
+        const telRaw = document.getElementById('deptTelefono').value.trim();
         if (!nombreDept) return;
 
+        let tel = '';
+        if (telRaw) {
+            tel = telefono10(telRaw);
+            if (!tel) { alert("El WhatsApp debe tener 10 dígitos."); return; }
+        }
+
         try {
-            await addDoc(collection(db, "departamentos"), { nombre: nombreDept });
+            await addDoc(collection(db, "departamentos"), { nombre: nombreDept, telefono: tel });
             alert(`¡Departamento "${nombreDept}" agregado con éxito!`);
             document.getElementById('deptNombre').value = '';
+            document.getElementById('deptTelefono').value = '';
             await loadDepartamentos();
             loadData();
         } catch (err) { alert("Error al guardar departamento."); }
     });
 
-    // GUARDAR NUEVO USUARIO CON CREACIÓN DE AUTENTICACIÓN Y CONTRASEÑA
+    async function loadDepartamentos() {
+        const deptTableBody = document.getElementById('deptTableBody');
+        if (deptTableBody) deptTableBody.innerHTML = '';
+        AREAS_LISTA = [];
+        AREAS_TEL = {};
+        DEPTS = {};
+
+        try {
+            const querySnapshot = await getDocs(collection(db, "departamentos"));
+            querySnapshot.forEach((docSnap) => {
+                const id = docSnap.id;
+                const nombre = docSnap.data().nombre;
+                const telefono = docSnap.data().telefono || '';
+                DEPTS[id] = { nombre, telefono };
+                if (nombre && !AREAS_LISTA.includes(nombre)) AREAS_LISTA.push(nombre);
+                if (nombre && telefono) AREAS_TEL[nombre] = telefono;
+
+                if (deptTableBody) {
+                    deptTableBody.innerHTML += `
+                        <tr>
+                            <td>${esc(nombre)}</td>
+                            <td>${telefono ? esc(formatoTel(telefono)) : '<span style="color:#dc2626;font-size:11px;">Sin WhatsApp</span>'}</td>
+                            <td>
+                                <div class="action-btn-group">
+                                    <button onclick="editDepartamento('${id}')" class="btn-edit-sm">✏️ Editar</button>
+                                    <button onclick="deleteDepartamento('${id}')" class="btn-del-sm">🗑️ Eliminar</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }
+            });
+        } catch (e) {}
+    }
+
+    window.editDepartamento = function(id) {
+        const d = DEPTS[id];
+        if (!d) return;
+
+        const iNom = el('input', { type: 'text', maxlength: '80' });
+        const iTel = el('input', { type: 'tel', maxlength: '14', inputmode: 'numeric', placeholder: '10 dígitos' });
+        iNom.value = d.nombre || '';
+        iTel.value = d.telefono || '';
+        const err = el('div', { class: 'msg-error', role: 'alert' });
+
+        const guardar = el('button', { type: 'button', class: 'btn-m btn-m-primary' }, 'Guardar');
+        guardar.addEventListener('click', async () => {
+            err.textContent = '';
+            const nombre = iNom.value.trim();
+            const telRaw = iTel.value.trim();
+            if (!nombre) { err.textContent = 'Escriba el nombre del área.'; return; }
+            let tel = '';
+            if (telRaw) {
+                tel = telefono10(telRaw);
+                if (!tel) { err.textContent = 'El WhatsApp debe tener 10 dígitos.'; return; }
+            }
+            guardar.disabled = true; guardar.textContent = 'Guardando...';
+            try {
+                await updateDoc(doc(db, "departamentos", id), { nombre, telefono: tel });
+                cerrarModal();
+                await loadDepartamentos();
+                loadData();
+            } catch (e) {
+                err.textContent = 'Error al actualizar departamento.';
+                guardar.disabled = false; guardar.textContent = 'Guardar';
+            }
+        });
+
+        const grupo = (label, input) => el('div', { class: 'form-group' }, el('label', { text: label }), input);
+        mostrarModal(el('div', { class: 'modal-box' },
+            el('h3', { text: '✏️ Editar departamento' }),
+            grupo('Nombre del área', iNom),
+            grupo('WhatsApp del área encargada', iTel),
+            err,
+            el('div', { class: 'modal-actions' }, el('button', { type: 'button', class: 'btn-m btn-m-light', onclick: cerrarModal }, 'Cancelar'), guardar)
+        ));
+    };
+
+    window.deleteDepartamento = async function(id) {
+        if (confirm("¿Deseas eliminar este departamento?")) {
+            try {
+                await deleteDoc(doc(db, "departamentos", id));
+                await loadDepartamentos();
+                loadData();
+            } catch (e) { alert("Error al borrar departamento."); }
+        }
+    };
+
+    // ---------- USUARIOS ----------
     document.getElementById('addUserForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('userEmail').value.trim();
@@ -577,73 +894,21 @@ const firebaseConfig = {
         try {
             // Guardar registro de perfil en Firestore
             await addDoc(collection(db, "usuarios"), { email: email, perfil: perfil });
-            
+
             alert(`¡Usuario "${email}" registrado exitosamente!\nSu contraseña de acceso es: ${password}`);
             document.getElementById('userEmail').value = '';
             document.getElementById('userPassword').value = '';
             await loadUsuarios();
-        } catch (err) { 
-            alert("Error al registrar el usuario: " + err.message); 
+        } catch (err) {
+            alert("Error al registrar el usuario: " + err.message);
         }
     });
 
-    // CARGAR Y GESTIONAR DEPARTAMENTOS
-    async function loadDepartamentos() {
-        const deptTableBody = document.getElementById('deptTableBody');
-        if (deptTableBody) deptTableBody.innerHTML = '';
-        AREAS_LISTA = [];
-        
-        try {
-            const querySnapshot = await getDocs(collection(db, "departamentos"));
-            querySnapshot.forEach((docSnap) => {
-                const id = docSnap.id;
-                const nombre = docSnap.data().nombre;
-                if (nombre && !AREAS_LISTA.includes(nombre)) AREAS_LISTA.push(nombre);
-
-                if (deptTableBody) {
-                    deptTableBody.innerHTML += `
-                        <tr>
-                            <td>${nombre}</td>
-                            <td>
-                                <div class="action-btn-group">
-                                    <button onclick="editDepartamento('${id}', '${nombre}')" class="btn-edit-sm">✏️ Editar</button>
-                                    <button onclick="deleteDepartamento('${id}')" class="btn-del-sm">🗑️ Eliminar</button>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                }
-            });
-        } catch (e) {}
-    }
-
-    window.editDepartamento = async function(id, nombreActual) {
-        const nuevoNombre = prompt("Modificar Nombre del Departamento:", nombreActual);
-        if (nuevoNombre && nuevoNombre.trim() !== '') {
-            try {
-                await updateDoc(doc(db, "departamentos", id), { nombre: nuevoNombre.trim() });
-                alert("Departamento actualizado.");
-                await loadDepartamentos();
-                loadData();
-            } catch (e) { alert("Error al actualizar departamento."); }
-        }
-    };
-
-    window.deleteDepartamento = async function(id) {
-        if (confirm("¿Deseas eliminar este departamento?")) {
-            try {
-                await deleteDoc(doc(db, "departamentos", id));
-                await loadDepartamentos();
-                loadData();
-            } catch (e) { alert("Error al borrar departamento."); }
-        }
-    };
-
-    // CARGAR Y GESTIONAR USUARIOS
     async function loadUsuarios() {
         const usersTableBody = document.getElementById('usersTableBody');
         if (!usersTableBody) return;
         usersTableBody.innerHTML = '';
+        USERS = {};
 
         let usuariosCargados = [USUARIO_SISTEMAS_BASE];
 
@@ -653,21 +918,22 @@ const firebaseConfig = {
                 const data = docSnap.data();
                 if (data.email.toLowerCase() !== USUARIO_SISTEMAS_BASE.email.toLowerCase()) {
                     usuariosCargados.push({ id: docSnap.id, email: data.email, perfil: data.perfil, esDb: true });
+                    USERS[docSnap.id] = { email: data.email, perfil: data.perfil };
                 }
             });
 
             usuariosCargados.forEach((user) => {
                 const actionBtns = user.esDb ? `
                     <div class="action-btn-group">
-                        <button onclick="editUsuario('${user.id}', '${user.email}')" class="btn-edit-sm">✏️ Editar</button>
+                        <button onclick="editUsuario('${user.id}')" class="btn-edit-sm">✏️ Editar</button>
                         <button onclick="deleteUsuario('${user.id}')" class="btn-del-sm">🗑️ Eliminar</button>
                     </div>
                 ` : `<span style="font-size:11px; color:#64748b;">(Super Admin Base)</span>`;
 
                 usersTableBody.innerHTML += `
                     <tr>
-                        <td>${user.email}</td>
-                        <td>${user.perfil}</td>
+                        <td>${esc(user.email)}</td>
+                        <td>${esc(user.perfil)}</td>
                         <td>${actionBtns}</td>
                     </tr>
                 `;
@@ -677,8 +943,10 @@ const firebaseConfig = {
         }
     }
 
-    window.editUsuario = async function(id, emailActual) {
-        const nuevoEmail = prompt("Modificar Correo del Usuario:", emailActual);
+    window.editUsuario = async function(id) {
+        const u = USERS[id];
+        if (!u) return;
+        const nuevoEmail = prompt("Modificar Correo del Usuario:", u.email);
         if (nuevoEmail && nuevoEmail.trim() !== '') {
             try {
                 await updateDoc(doc(db, "usuarios", id), { email: nuevoEmail.trim() });
@@ -697,12 +965,299 @@ const firebaseConfig = {
         }
     };
 
+    // ---------- CATÁLOGO DE SOCIOS (colección "socios") ----------
+    const reNumSocio = /^[A-Za-z0-9-]{1,20}$/;
+    const reCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+    async function loadSocios() {
+        try {
+            const snap = await getDocs(collection(db, 'socios'));
+            SOCIOS = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+                .sort((a, b) => a.id.localeCompare(b.id, 'es', { numeric: true }));
+            renderSocios();
+        } catch (err) {
+            console.error('Error al cargar socios:', err);
+            document.getElementById('sociosTableBody').innerHTML =
+                '<tr><td colspan="5" style="color:#dc2626;">No se pudo cargar el catálogo. Revise las reglas de Firestore.</td></tr>';
+        }
+    }
+
+    function renderSocios() {
+        const q = document.getElementById('socioSearch').value.trim().toLowerCase();
+        const lista = !q ? SOCIOS : SOCIOS.filter(s =>
+            [s.id, s.nombre, s.correo, s.telefono].some(v => String(v || '').toLowerCase().includes(q)));
+
+        document.getElementById('socioCount').textContent = `${lista.length} de ${SOCIOS.length} socios`;
+        const tbody = document.getElementById('sociosTableBody');
+
+        if (!lista.length) {
+            tbody.innerHTML = `<tr><td colspan="5" style="color:#64748b;">${SOCIOS.length ? 'Sin resultados para esa búsqueda.' : 'Aún no hay socios en el catálogo.'}</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = lista.map(s => `
+            <tr>
+                <td><b>#${esc(s.id)}</b></td>
+                <td>${esc(s.nombre || '—')}</td>
+                <td>${esc(s.correo || '—')}</td>
+                <td>${esc(formatoTel(s.telefono))}</td>
+                <td class="col-actions no-print">
+                    <div class="action-btn-group">
+                        <button type="button" data-act="edit" data-id="${esc(s.id)}" class="btn-edit-sm">✏️ Editar</button>
+                        <button type="button" data-act="del" data-id="${esc(s.id)}" class="btn-del-sm">🗑️ Eliminar</button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    document.getElementById('socioSearch').addEventListener('input', renderSocios);
+    document.getElementById('newSocioBtn').addEventListener('click', () => formSocio());
+    document.getElementById('sociosTableBody').addEventListener('click', (e) => {
+        const b = e.target.closest('button[data-act]');
+        if (!b) return;
+        const s = SOCIOS.find(x => x.id === b.dataset.id);
+        if (!s) return;
+        if (b.dataset.act === 'edit') formSocio(s);
+        if (b.dataset.act === 'del') eliminarSocio(s);
+    });
+
+    function formSocio(socio) {
+        const editando = !!socio;
+        const iNum = el('input', { type: 'text', maxlength: '20', placeholder: 'Ej. 1234' });
+        const iNom = el('input', { type: 'text', maxlength: '80', placeholder: 'Ej. Juan Pérez López' });
+        const iCor = el('input', { type: 'email', maxlength: '100', placeholder: 'correo@ejemplo.com' });
+        const iTel = el('input', { type: 'tel', maxlength: '14', placeholder: '427 142 2623' });
+        const err = el('div', { class: 'msg-error', role: 'alert' });
+
+        if (editando) {
+            iNum.value = socio.id; iNum.disabled = true;
+            iNom.value = socio.nombre || ''; iCor.value = socio.correo || ''; iTel.value = socio.telefono || '';
+        }
+
+        const guardar = el('button', { type: 'button', class: 'btn-m btn-m-primary' }, 'Guardar');
+        guardar.addEventListener('click', async () => {
+            err.textContent = '';
+            const num = iNum.value.trim();
+            const nombre = iNom.value.trim().replace(/\s+/g, ' ');
+            const correo = iCor.value.trim().toLowerCase();
+            const telRaw = iTel.value.trim();
+            const tel = telRaw ? telefono10(telRaw) : '';
+
+            if (!reNumSocio.test(num)) { err.textContent = 'Número de socio inválido (solo letras, números o guiones).'; return; }
+            if (nombre.length < 5 || nombre.split(' ').length < 2) { err.textContent = 'Escriba el nombre completo.'; return; }
+            if (correo && !reCorreo.test(correo)) { err.textContent = 'El correo no es válido.'; return; }
+            if (telRaw && !tel) { err.textContent = 'El teléfono debe tener 10 dígitos.'; return; }
+            if (!editando && SOCIOS.some(s => s.id === num)) { err.textContent = 'Ese número de socio ya existe.'; return; }
+
+            guardar.disabled = true; guardar.textContent = 'Guardando...';
+            try {
+                if (editando) {
+                    await updateDoc(doc(db, 'socios', num), { nombre, correo, telefono: tel || '', fechaModificacion: serverTimestamp() });
+                } else {
+                    await setDoc(doc(db, 'socios', num), { nombre, correo, telefono: tel || '', fechaAlta: serverTimestamp() });
+                }
+                cerrarModal();
+                await loadSocios();
+            } catch (e) {
+                console.error(e);
+                err.textContent = (e && e.code === 'permission-denied')
+                    ? 'Sin permisos. Revise las reglas de Firestore.' : 'Error al guardar. Inténtelo de nuevo.';
+                guardar.disabled = false; guardar.textContent = 'Guardar';
+            }
+        });
+
+        const grupo = (label, input) => el('div', { class: 'form-group' }, el('label', { text: label }), input);
+        mostrarModal(el('div', { class: 'modal-box' },
+            el('h3', { text: editando ? '✏️ Editar socio' : '➕ Nuevo socio' }),
+            grupo('Nro. de Socio', iNum), grupo('Nombre completo', iNom),
+            grupo('Correo (opcional)', iCor), grupo('Teléfono (opcional)', iTel),
+            err,
+            el('div', { class: 'modal-actions' }, el('button', { type: 'button', class: 'btn-m btn-m-light', onclick: cerrarModal }, 'Cancelar'), guardar)
+        ));
+    }
+
+    function eliminarSocio(s) {
+        modalConfirmar('Eliminar socio',
+            el('p', { text: `¿Eliminar al socio ${s.id} (${s.nombre || ''})? Ya no podrá enviar reportes hasta que se agregue de nuevo.` }),
+            'Eliminar',
+            async () => {
+                try {
+                    await deleteDoc(doc(db, 'socios', s.id));
+                    await loadSocios();
+                } catch (err) {
+                    console.error(err);
+                    alert('Error al eliminar el socio.');
+                }
+            }, true);
+    }
+
     window.downloadSociosList = function() {
-        document.body.classList.add('print-socios-only');
-        window.print();
-        document.body.classList.remove('print-socios-only');
+        const c = document.getElementById('catalogoBody');
+        if (c.style.display === 'none') c.style.display = 'block';
+        imprimirModo('print-socios');
     };
 
+    // ---------- WHATSAPP AL ÁREA RESPONSABLE ----------
+    window.preguntarWhatsApp = function(id, areaParam) {
+        const t = TICKETS[id];
+        if (!t) return;
+        const area = areaParam || t.areaResponsable;
+        if (!area) return;
+
+        const tel = AREAS_TEL[area];
+        if (!tel) {
+            modalAviso('Área sin WhatsApp',
+                `El área "${area}" no tiene número de WhatsApp registrado. Solicite a Sistemas que lo agregue en "Departamentos / Áreas".`);
+            return;
+        }
+
+        const folio = id.substring(0, 8).toUpperCase();
+        const desc = String(t.descripcion || '');
+        const mensaje = [
+            '*Club de Golf San Gil - Reporte asignado a su área*',
+            `Folio: #${folio}`,
+            `Tipo: ${t.tipo || 'N/A'}`,
+            `Prioridad: ${t.prioridad || 'N/A'}`,
+            `Fecha: ${t.fechaReporte || 'N/A'}`,
+            `Socio: ${t.nombre || 'Anónimo'} (Nro. ${t.numSocio || 'N/A'})`,
+            `Descripción: ${desc.length > 600 ? desc.slice(0, 600) + '...' : desc}`
+        ].join('\n');
+
+        const url = `https://wa.me/52${tel}?text=${encodeURIComponent(mensaje)}`;
+
+        modalConfirmar('📲 Enviar reporte por WhatsApp',
+            el('p', {}, '¿Desea enviar el reporte ', el('b', { text: '#' + folio }), ' al área ', el('b', { text: area }), '?'),
+            'Aceptar',
+            () => { window.open(url, '_blank', 'noopener'); });
+    };
+
+    // ---------- REPORTES POR NIVEL DE PRIORIDAD ----------
+    const RANK_PRIORIDAD = { 'Urgente': 0, 'Alta': 1, 'Media': 2, 'Baja': 3 };
+
+    function datosReporte(prioridad) {
+        const incluirResueltos = document.getElementById('chkResueltos').checked;
+
+        let lista = Object.entries(TICKETS).map(([id, d]) => ({
+            id, ...d,
+            estadoN: d.estado || 'Pendiente',
+            dias: calcularAntiguedad(d.fechaReporte, d.fecha).dias
+        }));
+
+        if (!incluirResueltos) lista = lista.filter(t => t.estadoN !== 'Resuelto');
+        if (prioridad !== 'General') lista = lista.filter(t => t.prioridad === prioridad);
+
+        if (!lista.length) {
+            modalAviso('Sin registros', prioridad === 'General'
+                ? 'No hay reportes para incluir.'
+                : `No hay reportes con prioridad ${prioridad}.`);
+            return null;
+        }
+
+        // Mayor a menor urgencia; a igual prioridad, el más antiguo primero
+        lista.sort((a, b) => ((RANK_PRIORIDAD[a.prioridad] ?? 9) - (RANK_PRIORIDAD[b.prioridad] ?? 9)) || (b.dias - a.dias));
+        return { lista, incluirResueltos };
+    }
+
+    window.generarReporte = function(prioridad) {
+        const datos = datosReporte(prioridad);
+        if (!datos) return;
+        const { lista, incluirResueltos } = datos;
+
+        const cuenta = {};
+        lista.forEach(t => { cuenta[t.prioridad] = (cuenta[t.prioridad] || 0) + 1; });
+        const resumen = Object.keys(RANK_PRIORIDAD).filter(p => cuenta[p]).map(p => `${p}: ${cuenta[p]}`).join(' | ');
+
+        const titulo = prioridad === 'General' ? 'Reporte General por Nivel de Urgencia' : `Reporte de Prioridad ${prioridad}`;
+        const generado = new Date().toLocaleString('es-MX');
+        const usuario = auth.currentUser ? auth.currentUser.email : '';
+
+        const filas = lista.map(t => `
+            <tr>
+                <td><b>#${esc(t.id.substring(0, 8).toUpperCase())}</b></td>
+                <td>${esc(t.fechaReporte || 'N/A')}</td>
+                <td class="prio-${esc(String(t.prioridad || '').toLowerCase())}">${esc(t.prioridad || 'N/A')}</td>
+                <td>${esc(t.tipo || '')}</td>
+                <td>${esc(t.nombre || 'Anónimo')}<br><span style="color:#64748b;">Nro. ${esc(t.numSocio || 'N/A')}</span></td>
+                <td>${esc(t.estadoN)}</td>
+                <td>${esc(t.areaResponsable || 'Sin asignar')}</td>
+                <td>${t.dias}</td>
+                <td>${esc(t.descripcion || '')}</td>
+            </tr>
+        `).join('');
+
+        document.getElementById('reportePrint').innerHTML = `
+            <h3 class="rep-title">${esc(titulo)}</h3>
+            <div class="rep-meta">
+                Ordenado de mayor a menor urgencia · Total: <b>${lista.length}</b> (${esc(resumen)})<br>
+                ${incluirResueltos ? 'Incluye casos resueltos' : 'Solo casos abiertos (Pendiente / En Proceso)'} · Generado: ${esc(generado)} · Por: ${esc(usuario)}
+            </div>
+            <table class="rep-table">
+                <thead>
+                    <tr>
+                        <th>Folio</th><th>Fecha</th><th>Prioridad</th><th>Tipo</th><th>Socio</th>
+                        <th>Estatus</th><th>Área</th><th>Días abierto</th><th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>${filas}</tbody>
+            </table>
+        `;
+
+        imprimirModo('print-reporte');
+    };
+
+    // Descarga del mismo reporte (mismo orden de urgencia) en formato Excel (.xlsx)
+    window.descargarExcel = function(prioridad) {
+        if (typeof XLSX === 'undefined') {
+            modalAviso('Excel no disponible', 'No se pudo cargar el componente de Excel. Revise su conexión a internet y recargue la página.');
+            return;
+        }
+
+        const datos = datosReporte(prioridad);
+        if (!datos) return;
+        const { lista, incluirResueltos } = datos;
+
+        const titulo = prioridad === 'General' ? 'Reporte General por Nivel de Urgencia' : `Reporte de Prioridad ${prioridad}`;
+        const usuario = auth.currentUser ? auth.currentUser.email : '';
+        const generado = new Date().toLocaleString('es-MX');
+
+        const encabezado = ['Folio', 'Fecha', 'Prioridad', 'Tipo', 'Nro. Socio', 'Socio', 'Estatus', 'Área Responsable', 'Días abierto', 'Descripción'];
+        const filas = lista.map(t => [
+            '#' + t.id.substring(0, 8).toUpperCase(),
+            t.fechaReporte || 'N/A',
+            t.prioridad || 'N/A',
+            t.tipo || '',
+            String(t.numSocio || 'N/A'),
+            t.nombre || 'Anónimo',
+            t.estadoN,
+            t.areaResponsable || 'Sin asignar',
+            t.dias,
+            t.descripcion || ''
+        ]);
+
+        const aoa = [
+            ['Club de Golf San Gil - ' + titulo],
+            [`Ordenado de mayor a menor urgencia · Total: ${lista.length} · ${incluirResueltos ? 'Incluye casos resueltos' : 'Solo casos abiertos'}`],
+            [`Generado: ${generado} · Por: ${usuario}`],
+            [],
+            encabezado,
+            ...filas
+        ];
+
+        const ws = XLSX.utils.aoa_to_sheet(aoa);
+        ws['!cols'] = [{ wch: 11 }, { wch: 12 }, { wch: 11 }, { wch: 18 }, { wch: 11 }, { wch: 28 }, { wch: 12 }, { wch: 24 }, { wch: 12 }, { wch: 70 }];
+        ws['!merges'] = [0, 1, 2].map(r => ({ s: { r, c: 0 }, e: { r, c: 9 } }));
+
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Reporte');
+
+        const d = new Date();
+        const hoy = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        const nombreArchivo = `Reporte_${prioridad === 'General' ? 'General' : 'Prioridad_' + prioridad}_${hoy}.xlsx`;
+        XLSX.writeFile(wb, nombreArchivo);
+    };
+
+    // ---------- TICKETS ----------
     window.toggleFilterPending = function() {
         showOnlyPending = !showOnlyPending;
         filterBtn.textContent = showOnlyPending ? "Mostrar Todos los Casos" : "Mostrar solo No Realizadas";
@@ -730,23 +1285,19 @@ const firebaseConfig = {
         if (diffDias <= 0) return { texto: '⏱️ Abierto hoy', clase: 'time-recent', dias: 0 };
         if (diffDias === 1) return { texto: '⏱️ Abierto hace 1 día', clase: 'time-recent', dias: 1 };
         if (diffDias < 7) return { texto: `⏱️ Abierto hace ${diffDias} días`, clase: 'time-warning', dias: diffDias };
-        
+
         return { texto: `⚠️ Abierto hace ${diffDias} días (> 1 Semana)`, clase: 'time-danger', dias: diffDias };
     }
 
     async function loadData() {
         ticketsContainer.innerHTML = '';
-        const sociosTableBody = document.getElementById('sociosTableBody');
         const foliosTableBody = document.getElementById('foliosTableBody');
-        
-        if (sociosTableBody) sociosTableBody.innerHTML = '';
         if (foliosTableBody) foliosTableBody.innerHTML = '';
-
-        let sociosAgregadosSet = new Set();
+        TICKETS = {};
 
         try {
             const querySnapshot = await getDocs(collection(db, "quejas_sugerencias"));
-            
+
             let total = 0, pend = 0, proc = 0, resSemana = 0, resTotal = 0;
 
             if (querySnapshot.empty) {
@@ -757,7 +1308,8 @@ const firebaseConfig = {
             querySnapshot.forEach((docSnap) => {
                 const data = docSnap.data();
                 const id = docSnap.id;
-                const folioCorto = id.substring(0,6).toUpperCase();
+                TICKETS[id] = data;
+                const folioCorto = id.substring(0, 8).toUpperCase();
                 const estado = data.estado || 'Pendiente';
 
                 const antiguedad = calcularAntiguedad(data.fechaReporte, data.fecha);
@@ -771,42 +1323,29 @@ const firebaseConfig = {
                 }
 
                 const numSocioKey = data.numSocio || 'N/A';
-                if (currentRole === 'superadmin' && sociosTableBody) {
-                    if (!sociosAgregadosSet.has(numSocioKey)) {
-                        sociosAgregadosSet.add(numSocioKey);
-                        sociosTableBody.innerHTML += `
-                            <tr>
-                                <td><b>#${numSocioKey}</b></td>
-                                <td>${data.nombre || 'Anónimo'}</td>
-                                <td>${data.domicilio || 'N/A'}</td>
-                            </tr>
-                        `;
-                    }
-
-                    if (foliosTableBody) {
-                        foliosTableBody.innerHTML += `
-                            <tr>
-                                <td><b>#${folioCorto}</b></td>
-                                <td>${data.fechaReporte || 'N/A'}</td>
-                                <td>${data.nombre || 'Anónimo'} (${numSocioKey})</td>
-                                <td>${estado}</td>
-                                <td>${data.areaResponsable || 'Sin Asignar'}</td>
-                                <td><button onclick="deleteTicket('${id}')" class="btn-del-sm">Eliminar</button></td>
-                            </tr>
-                        `;
-                    }
+                if (currentRole === 'superadmin' && foliosTableBody) {
+                    foliosTableBody.innerHTML += `
+                        <tr>
+                            <td><b>#${esc(folioCorto)}</b></td>
+                            <td>${esc(data.fechaReporte || 'N/A')}</td>
+                            <td>${esc(data.nombre || 'Anónimo')} (${esc(numSocioKey)})</td>
+                            <td>${esc(estado)}</td>
+                            <td>${esc(data.areaResponsable || 'Sin Asignar')}</td>
+                            <td><button onclick="deleteTicket('${id}')" class="btn-del-sm">Eliminar</button></td>
+                        </tr>
+                    `;
                 }
 
                 if (showOnlyPending && estado === 'Resuelto') return;
 
                 let tipoBadge = 'badge-queja';
-                if(data.tipo === 'Sugerencia') tipoBadge = 'badge-sugerencia';
-                if(data.tipo === 'Reporte de Campo') tipoBadge = 'badge-reporte';
+                if (data.tipo === 'Sugerencia') tipoBadge = 'badge-sugerencia';
+                if (data.tipo === 'Reporte de Campo') tipoBadge = 'badge-reporte';
 
                 let areaOptionsHtml = `<option value="">-- Seleccionar Área --</option>`;
                 AREAS_LISTA.forEach(area => {
                     const selected = (data.areaResponsable === area) ? 'selected' : '';
-                    areaOptionsHtml += `<option value="${area}" ${selected}>${area}</option>`;
+                    areaOptionsHtml += `<option value="${esc(area)}" ${selected}>${esc(area)}</option>`;
                 });
 
                 let actionSection = '';
@@ -826,6 +1365,7 @@ const firebaseConfig = {
                                 <select class="select-field" onchange="updateTicketArea('${id}', this.value)">
                                     ${areaOptionsHtml}
                                 </select>
+                                ${data.areaResponsable ? `<button type="button" onclick="preguntarWhatsApp('${id}')" class="btn-wa-sm" style="margin-top:8px; width:100%;">📲 Enviar por WhatsApp a ${esc(data.areaResponsable)}</button>` : ''}
                             </div>
                             ${currentRole === 'superadmin' ? `<button onclick="deleteTicket('${id}')" class="btn-del-sm" style="align-self:flex-end;">Eliminar Ticket</button>` : ''}
                         </div>
@@ -833,25 +1373,28 @@ const firebaseConfig = {
                 } else {
                     actionSection = `
                         <div class="ticket-actions">
-                            <p style="margin:2px 0; font-size:12px;"><strong>Estatus:</strong> <b>${estado}</b></p>
-                            <p style="margin:2px 0; font-size:12px;"><strong>Área Asignada:</strong> <b>${data.areaResponsable || 'Pendiente de asignar'}</b></p>
+                            <p style="margin:2px 0; font-size:12px;"><strong>Estatus:</strong> <b>${esc(estado)}</b></p>
+                            <p style="margin:2px 0; font-size:12px;"><strong>Área Asignada:</strong> <b>${esc(data.areaResponsable || 'Pendiente de asignar')}</b></p>
                         </div>
                     `;
                 }
 
+                const domicilioHtml = (data.domicilio && data.domicilio !== 'N/A')
+                    ? ` | <strong>Domicilio:</strong> ${esc(data.domicilio)}` : '';
+
                 const cardHtml = `
                     <div class="ticket-card">
                         <div class="ticket-header">
-                            <span class="ticket-id">FOLIO: #${folioCorto}</span>
-                            <span class="badge ${tipoBadge}">${data.tipo}</span>
+                            <span class="ticket-id">FOLIO: #${esc(folioCorto)}</span>
+                            <span class="badge ${tipoBadge}">${esc(data.tipo)}</span>
                         </div>
                         <div class="ticket-body">
                             <div><span class="time-badge ${antiguedad.clase}">${antiguedad.texto}</span></div>
-                            <p><strong>Socio:</strong> ${data.nombre || 'Anónimo'}</p>
-                            <p><strong>Nro. Socio:</strong> ${data.numSocio || 'N/A'} | <strong>Domicilio:</strong> ${data.domicilio || 'N/A'}</p>
-                            <p><strong>Fecha Registro:</strong> ${data.fechaReporte || 'Reciente'}</p>
-                            <p><strong>Prioridad:</strong> ${data.prioridad}</p>
-                            <p style="margin-top:8px; background:#f8fafc; padding:8px; border-radius:6px; border:1px solid #e2e8f0;">${data.descripcion}</p>
+                            <p><strong>Socio:</strong> ${esc(data.nombre || 'Anónimo')}</p>
+                            <p><strong>Nro. Socio:</strong> ${esc(data.numSocio || 'N/A')}${domicilioHtml}</p>
+                            <p><strong>Fecha Registro:</strong> ${esc(data.fechaReporte || 'Reciente')}</p>
+                            <p><strong>Prioridad:</strong> ${esc(data.prioridad)}</p>
+                            <p style="margin-top:8px; background:#f8fafc; padding:8px; border-radius:6px; border:1px solid #e2e8f0;">${esc(data.descripcion)}</p>
                         </div>
                         ${actionSection}
                     </div>
@@ -905,13 +1448,16 @@ const firebaseConfig = {
         }
     };
 
+    // Al elegir el área: se guarda y se pregunta si desea enviar el reporte por WhatsApp
     window.updateTicketArea = async function(id, newArea) {
         try {
             await updateDoc(doc(db, "quejas_sugerencias", id), { areaResponsable: newArea });
-            loadData();
         } catch (e) {
             alert("Error al asignar el área.");
+            return;
         }
+        await loadData();
+        if (newArea) window.preguntarWhatsApp(id, newArea);
     };
 
     window.deleteTicket = async function(id) {

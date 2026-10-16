@@ -4,69 +4,370 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Consultar Folio - Club de Golf San Gil</title>
+
     <style>
-        :root { --royal-blue: #0a1931; --accent-green: #008040; }
-        * { box-sizing: border-box; }
+        :root {
+            --royal-blue: #0a1931;
+            --accent-green: #008040;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center;
-            min-height: 100vh; background-color: var(--royal-blue);
-            background-image: radial-gradient(circle at 50% 30%, #152b52 0%, #0a1931 70%);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: var(--royal-blue);
+            background-image: radial-gradient(
+                circle at 50% 30%,
+                #152b52 0%,
+                #0a1931 70%
+            );
         }
+
         .container {
-            background: #fff; padding: 35px; border-radius: 16px; width: 100%; max-width: 520px;
-            box-shadow: 0 15px 35px rgba(0,0,0,.5); border-top: 6px solid #003399;
+            background: #fff;
+            padding: 35px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 620px;
+            box-shadow: 0 15px 35px rgba(0,0,0,.5);
+            border-top: 6px solid #003399;
         }
-        .header { text-align: center; margin-bottom: 20px; }
-        .header img { max-width: 120px; height: auto; margin-bottom: 12px; }
-        .header h1 { color: #003399; font-size: 22px; margin: 0 0 6px; }
-        .header p { color: #555; font-size: 13px; margin: 0; font-style: italic; }
-        label { display: block; margin-bottom: 6px; font-weight: 600; color: #003399; font-size: 14px; }
+
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .header img {
+            max-width: 120px;
+            height: auto;
+            margin-bottom: 12px;
+        }
+
+        .header h1 {
+            color: #003399;
+            font-size: 22px;
+            margin: 0 0 6px;
+        }
+
+        .header p {
+            color: #555;
+            font-size: 13px;
+            margin: 0;
+            font-style: italic;
+        }
+
+        .section-title {
+            color: #003399;
+            font-size: 16px;
+            margin: 0 0 12px;
+        }
+
+        .section-description {
+            color: #64748b;
+            font-size: 13px;
+            line-height: 1.5;
+            margin: 0 0 14px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #003399;
+            font-size: 14px;
+        }
+
         input[type="text"] {
-            width: 100%; padding: 11px 14px; border: 1px solid #cbd5e1; border-radius: 8px;
-            font-size: 16px; background: #f8fafc; color: #333; text-transform: uppercase; letter-spacing: 1px;
+            width: 100%;
+            padding: 11px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 16px;
+            background: #f8fafc;
+            color: #333;
         }
-        input[type="text"]:focus { border-color: #003399; outline: none; background: #fff; }
+
+        #inputFolio {
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        input[type="text"]:focus {
+            border-color: #003399;
+            outline: none;
+            background: #fff;
+        }
+
         .btn-submit {
-            background: var(--accent-green); color: #fff; padding: 14px 20px; border: none; border-radius: 8px;
-            cursor: pointer; width: 100%; font-size: 16px; font-weight: bold; margin-top: 14px; transition: background .3s;
+            background: var(--accent-green);
+            color: #fff;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 15px;
+            font-weight: bold;
+            margin-top: 14px;
+            transition: background .3s;
         }
-        .btn-submit:hover { background: #006633; }
-        .btn-submit:disabled { opacity: .6; cursor: not-allowed; }
-        .result { display: none; margin-top: 22px; padding: 18px; border-radius: 12px; font-size: 14px; line-height: 1.7; }
-        .result.ok { background: #f8fafc; border: 1px solid #cbd5e1; }
-        .result.err { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
-        .row { display: flex; justify-content: space-between; gap: 10px; border-bottom: 1px solid #e2e8f0; padding: 6px 0; }
-        .row:last-of-type { border-bottom: none; }
-        .row span:first-child { color: #64748b; }
-        .row span:last-child { font-weight: 600; color: #0f172a; text-align: right; }
-        .badge { padding: 2px 10px; border-radius: 999px; color: #fff; font-size: 13px; }
-        .contact { font-size: 13px; color: #475569; border-top: 1px solid #cbd5e1; padding-top: 10px; margin-top: 10px; }
-        .back { text-align: center; margin-top: 25px; border-top: 1px solid #e2e8f0; padding-top: 15px; }
-        .back a { color: #64748b; font-size: 13px; text-decoration: none; font-weight: 500; }
-        .back a:hover { color: #003399; }
+
+        .btn-submit:hover {
+            background: #006633;
+        }
+
+        .btn-submit:disabled {
+            opacity: .6;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: #003399;
+        }
+
+        .btn-secondary:hover {
+            background: #002266;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 25px 0;
+            color: #94a3b8;
+            font-size: 12px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: #e2e8f0;
+        }
+
+        .result {
+            display: none;
+            margin-top: 22px;
+            padding: 18px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .result.ok {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+        }
+
+        .result.err {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 8px 0;
+        }
+
+        .row:last-of-type {
+            border-bottom: none;
+        }
+
+        .row span:first-child {
+            color: #64748b;
+        }
+
+        .row span:last-child {
+            font-weight: 600;
+            color: #0f172a;
+            text-align: right;
+            overflow-wrap: anywhere;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 999px;
+            color: #fff !important;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .contact {
+            font-size: 13px;
+            color: #475569;
+            border-top: 1px solid #cbd5e1;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+
+        .list-header {
+            margin-bottom: 12px;
+            color: #003399;
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        .report-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 12px;
+            overflow-wrap: anywhere;
+        }
+
+        .report-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .report-folio {
+            color: #003399;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .folio-button {
+            margin-top: 6px;
+            padding: 8px 12px;
+            background: #003399;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            width: 100%;
+        }
+
+        .folio-button:hover {
+            background: #002266;
+        }
+
+        .back {
+            text-align: center;
+            margin-top: 25px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 15px;
+        }
+
+        .back a {
+            color: #64748b;
+            font-size: 13px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back a:hover {
+            color: #003399;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 12px;
+            }
+
+            .container {
+                padding: 22px 18px;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+        }
     </style>
 </head>
+
 <body>
 <div class="container">
+
     <div class="header">
         <img src="San_Gil_sn_Fondo.png" alt="Club de Golf San Gil Logo">
         <h1>🔍 Consultar Estado de Folio</h1>
-        <p>Ingrese el folio que recibió al enviar su reporte.</p>
+        <p>Consulte el estatus de su reporte o recupere su número de folio.</p>
     </div>
 
-    <label for="inputFolio">Número de folio</label>
-    <input type="text" id="inputFolio" placeholder="Ej. A1B2C3D4" maxlength="8" autocomplete="off">
-    <button type="button" class="btn-submit" id="searchBtn">Buscar Estatus</button>
+    <!-- OPCIÓN 1: BUSCAR POR FOLIO -->
+    <section>
+        <h2 class="section-title">Consultar con número de folio</h2>
 
-    <div id="result" class="result" aria-live="polite"></div>
+        <p class="section-description">
+            Ingrese el folio que recibió al enviar su reporte para consultar su estatus.
+        </p>
 
-    <div class="back"><a href="index.html">← Volver al Buzón de Quejas y Sugerencias</a></div>
+        <label for="inputFolio">Número de folio</label>
+        <input
+            type="text"
+            id="inputFolio"
+            placeholder="Ej. A1B2C3D4"
+            maxlength="8"
+            autocomplete="off"
+        >
+
+        <button type="button" class="btn-submit" id="searchBtn">
+            Buscar Estatus
+        </button>
+
+        <div id="result" class="result" aria-live="polite"></div>
+    </section>
+
+    <div class="divider">¿OLVIDÓ SU FOLIO?</div>
+
+    <!-- OPCIÓN 2: RECUPERAR FOLIOS POR NÚMERO DE SOCIO -->
+    <section>
+        <h2 class="section-title">Recuperar mis folios</h2>
+
+        <p class="section-description">
+            Si no recuerda su número de folio, ingrese su número de socio
+            para consultar los reportes registrados con ese número.
+        </p>
+
+        <label for="inputSocio">Número de socio</label>
+        <input
+            type="text"
+            id="inputSocio"
+            placeholder="Ingrese su número de socio"
+            autocomplete="off"
+        >
+
+        <button type="button" class="btn-submit btn-secondary" id="searchSocioBtn">
+            Buscar mis folios
+        </button>
+
+        <div id="resultSocio" class="result" aria-live="polite"></div>
+    </section>
+
+    <div class="back">
+        <a href="index.html">← Volver al Buzón de Quejas y Sugerencias</a>
+    </div>
+
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    import {
+        getFirestore,
+        collection,
+        getDocs,
+        query,
+        where
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyChMBgZFA--PI5cFn1fawrG631XXUxBIqQ",
@@ -80,89 +381,310 @@
 
     const db = getFirestore(initializeApp(firebaseConfig));
 
-    const input = document.getElementById('inputFolio');
-    const btn = document.getElementById('searchBtn');
+    const inputFolio = document.getElementById('inputFolio');
+    const searchBtn = document.getElementById('searchBtn');
     const result = document.getElementById('result');
 
-    const colores = { 'Pendiente': '#d97706', 'En proceso': '#2563eb', 'Resuelto': '#16a34a' };
+    const inputSocio = document.getElementById('inputSocio');
+    const searchSocioBtn = document.getElementById('searchSocioBtn');
+    const resultSocio = document.getElementById('resultSocio');
 
-    function showError(msg) {
-        result.className = 'result err';
-        result.textContent = msg;
+    const colores = {
+        'Pendiente': '#d97706',
+        'En proceso': '#2563eb',
+        'Resuelto': '#16a34a'
+    };
+
+    function mostrarError(contenedor, mensaje) {
+        contenedor.className = 'result err';
+        contenedor.textContent = mensaje;
+        contenedor.style.display = 'block';
+    }
+
+    function crearFila(etiqueta, valor, colorInsignia) {
+        const fila = document.createElement('div');
+        fila.className = 'row';
+
+        const etiquetaSpan = document.createElement('span');
+        etiquetaSpan.textContent = etiqueta;
+
+        const valorSpan = document.createElement('span');
+
+        if (colorInsignia) {
+            const insignia = document.createElement('span');
+            insignia.className = 'badge';
+            insignia.style.background = colorInsignia;
+            insignia.textContent = valor;
+            valorSpan.appendChild(insignia);
+        } else {
+            valorSpan.textContent = valor;
+        }
+
+        fila.append(etiquetaSpan, valorSpan);
+        return fila;
+    }
+
+    function obtenerFecha(datos) {
+        if (datos.fecha && typeof datos.fecha.toDate === 'function') {
+            return datos.fecha.toDate().toLocaleDateString('es-MX');
+        }
+
+        if (datos.fechaReporte) {
+            const fecha = new Date(datos.fechaReporte);
+
+            if (!Number.isNaN(fecha.getTime())) {
+                return fecha.toLocaleDateString('es-MX');
+            }
+
+            return datos.fechaReporte;
+        }
+
+        return 'No disponible';
+    }
+
+    function mostrarDetalleFolio(folio, datos) {
+        const estado = datos.estado || 'Pendiente';
+
+        result.className = 'result ok';
+        result.replaceChildren(
+            crearFila('Folio', '#' + folio),
+            crearFila('Tipo', datos.tipo || '—'),
+            crearFila('Prioridad', datos.prioridad || '—'),
+            crearFila('Fecha de registro', obtenerFecha(datos)),
+            crearFila(
+                'Estatus actual',
+                estado,
+                colores[estado] || '#64748b'
+            )
+        );
+
+        const contacto = document.createElement('div');
+        contacto.className = 'contact';
+        contacto.textContent =
+            'Para dudas o seguimiento directo comuníquese al 427 142 2623.';
+
+        result.appendChild(contacto);
         result.style.display = 'block';
     }
 
-    function row(label, value, badgeColor) {
-        const r = document.createElement('div');
-        r.className = 'row';
-        const a = document.createElement('span'); a.textContent = label;
-        const b = document.createElement('span');
-        if (badgeColor) {
-            const s = document.createElement('span');
-            s.className = 'badge'; s.style.background = badgeColor; s.textContent = value;
-            b.appendChild(s);
-        } else {
-            b.textContent = value;
-        }
-        r.append(a, b);
-        return r;
-    }
+    // OPCIÓN 1: BUSCAR POR FOLIO
+    async function buscarFolio() {
+        const folio = inputFolio.value
+            .trim()
+            .toUpperCase()
+            .replace(/[^A-Z0-9]/g, '');
 
-    async function buscar() {
-        const folio = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
         result.style.display = 'none';
 
-        if (folio.length < 6) {
-            showError('Ingrese su folio completo (8 caracteres). Mínimo 6.');
+        if (folio.length < 4) {
+            mostrarError(
+                result,
+                'Ingrese su número de folio.'
+            );
             return;
         }
 
-        btn.disabled = true;
-        btn.textContent = 'Buscando...';
+        searchBtn.disabled = true;
+        searchBtn.textContent = 'Buscando...';
 
         try {
-            const qs = await getDocs(collection(db, 'quejas_sugerencias'));
-            let d = null;
-            qs.forEach((s) => {
-                if (!d && s.id.toUpperCase().startsWith(folio)) d = s.data();
+            const consulta = await getDocs(
+                collection(db, 'quejas_sugerencias')
+            );
+
+            let documentoEncontrado = null;
+
+            consulta.forEach((documento) => {
+                if (documento.id.toUpperCase().startsWith(folio)) {
+                    documentoEncontrado = {
+                        folio: documento.id.substring(0, 8).toUpperCase(),
+                        datos: documento.data()
+                    };
+                }
             });
 
-            if (!d) {
-                showError('No se encontró ningún reporte con el folio #' + folio + '. Verifique que esté escrito correctamente (' + folio.length + ' caracteres escritos, el folio tiene 8).');
+            if (!documentoEncontrado) {
+                mostrarError(
+                    result,
+                    'No se encontró el folio #' + folio +
+                    '. Verifique que lo haya escrito correctamente.'
+                );
                 return;
             }
-            const estado = d.estado || 'Pendiente';
-            let fecha = d.fechaReporte || 'Reciente';
-            if (d.fecha && d.fecha.toDate) fecha = d.fecha.toDate().toLocaleDateString('es-MX');
 
-            result.className = 'result ok';
-            result.replaceChildren(
-                row('Folio', '#' + folio),
-                row('Tipo', d.tipo || '—'),
-                row('Prioridad', d.prioridad || '—'),
-                row('Fecha de registro', fecha),
-                row('Estatus actual', estado, colores[estado] || '#64748b')
+            mostrarDetalleFolio(
+                documentoEncontrado.folio,
+                documentoEncontrado.datos
             );
-            const c = document.createElement('div');
-            c.className = 'contact';
-            c.textContent = 'Para dudas o seguimiento directo comuníquese al 427 142 2623.';
-            result.appendChild(c);
-            result.style.display = 'block';
-        } catch (e) {
-            console.error(e);
-            showError('Error al consultar la base de datos. Inténtelo de nuevo más tarde.');
+
+        } catch (error) {
+            console.error('Error al buscar folio:', error);
+
+            mostrarError(
+                result,
+                'No fue posible consultar la base de datos. Inténtelo nuevamente más tarde.'
+            );
         } finally {
-            btn.disabled = false;
-            btn.textContent = 'Buscar Estatus';
+            searchBtn.disabled = false;
+            searchBtn.textContent = 'Buscar Estatus';
         }
     }
 
-    btn.addEventListener('click', buscar);
-    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') buscar(); });
+    // OPCIÓN 2: RECUPERAR FOLIOS POR NÚMERO DE SOCIO (Solo muestra Folio y botón)
+    async function buscarFoliosSocio() {
+        const numeroSocio = inputSocio.value.trim();
 
-    // Si llega con ?folio=XXXXXXXX (enlace directo tras enviar el reporte), busca automáticamente
-    const p = new URLSearchParams(location.search).get('folio');
-    if (p) { input.value = p; buscar(); }
+        resultSocio.style.display = 'none';
+
+        if (!numeroSocio) {
+            mostrarError(
+                resultSocio,
+                'Ingrese su número de socio para continuar.'
+            );
+            return;
+        }
+
+        searchSocioBtn.disabled = true;
+        searchSocioBtn.textContent = 'Buscando reportes...';
+
+        try {
+            const reportesRef = collection(db, 'quejas_sugerencias');
+
+            const consultaSocio = query(
+                reportesRef,
+                where('numSocio', '==', numeroSocio)
+            );
+
+            const resultado = await getDocs(consultaSocio);
+
+            if (resultado.empty) {
+                mostrarError(
+                    resultSocio,
+                    'No se encontraron reportes asociados al número de socio ingresado. Verifique el número e inténtelo nuevamente.'
+                );
+                return;
+            }
+
+            const reportes = [];
+
+            resultado.forEach((documento) => {
+                reportes.push({
+                    folio: documento.id.substring(0, 8).toUpperCase(),
+                    datos: documento.data()
+                });
+            });
+
+            reportes.sort((a, b) => {
+                const fechaA = obtenerFechaOrdenable(a.datos);
+                const fechaB = obtenerFechaOrdenable(b.datos);
+                return fechaB - fechaA;
+            });
+
+            resultSocio.className = 'result ok';
+            resultSocio.replaceChildren();
+
+            const encabezado = document.createElement('div');
+            encabezado.className = 'list-header';
+            encabezado.textContent =
+                'Se encontraron ' + reportes.length +
+                (reportes.length === 1
+                    ? ' reporte asociado a su número de socio:'
+                    : ' reportes asociados a su número de socio:');
+
+            resultSocio.appendChild(encabezado);
+
+            reportes.forEach(({ folio, datos }) => {
+                const tarjeta = document.createElement('div');
+                tarjeta.className = 'report-card';
+
+                const folioTitulo = document.createElement('div');
+                folioTitulo.className = 'report-folio';
+                folioTitulo.textContent = 'Folio: #' + folio;
+
+                // Botón para consultar el folio y mandar la pantalla hacia arriba
+                const boton = document.createElement('button');
+                boton.type = 'button';
+                boton.className = 'folio-button';
+                boton.textContent = 'Consultar este folio';
+
+                boton.addEventListener('click', () => {
+                    inputFolio.value = folio;
+                    mostrarDetalleFolio(folio, datos);
+
+                    // Desplazamiento suave hacia la parte superior de la página
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                });
+
+                // Solo agregamos el título del folio y el botón (sin tipo, fecha ni estatus abajo)
+                tarjeta.append(
+                    folioTitulo,
+                    boton
+                );
+
+                resultSocio.appendChild(tarjeta);
+            });
+
+            const contacto = document.createElement('div');
+            contacto.className = 'contact';
+            contacto.textContent =
+                'Para dudas o seguimiento directo comuníquese al 427 142 2623.';
+
+            resultSocio.appendChild(contacto);
+            resultSocio.style.display = 'block';
+
+        } catch (error) {
+            console.error('Error al buscar reportes del socio:', error);
+
+            mostrarError(
+                resultSocio,
+                'No fue posible recuperar sus folios. Inténtelo nuevamente más tarde.'
+            );
+        } finally {
+            searchSocioBtn.disabled = false;
+            searchSocioBtn.textContent = 'Buscar mis folios';
+        }
+    }
+
+    function obtenerFechaOrdenable(datos) {
+        if (datos.fecha && typeof datos.fecha.toDate === 'function') {
+            return datos.fecha.toDate().getTime();
+        }
+
+        if (datos.fechaReporte) {
+            const fecha = new Date(datos.fechaReporte);
+
+            if (!Number.isNaN(fecha.getTime())) {
+                return fecha.getTime();
+            }
+        }
+
+        return 0;
+    }
+
+    searchBtn.addEventListener('click', buscarFolio);
+    searchSocioBtn.addEventListener('click', buscarFoliosSocio);
+
+    inputFolio.addEventListener('keydown', (evento) => {
+        if (evento.key === 'Enter') {
+            buscarFolio();
+        }
+    });
+
+    inputSocio.addEventListener('keydown', (evento) => {
+        if (evento.key === 'Enter') {
+            buscarFoliosSocio();
+        }
+    });
+
+    const folioURL = new URLSearchParams(location.search).get('folio');
+
+    if (folioURL) {
+        inputFolio.value = folioURL;
+        buscarFolio();
+    }
 </script>
 </body>
 </html>
